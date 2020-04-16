@@ -53,8 +53,8 @@ export class CarService {
 	}
 
 	updateCarInfo(car: Car) {
-		// console.log(user);
-		return this.http.put(this.url, car).toPromise();
+		console.log(this.url);
+		return this.http.put(this.url + car.carId, car).toPromise();
 	}
 
 

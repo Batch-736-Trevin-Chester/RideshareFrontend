@@ -12,7 +12,7 @@
   </div>
 
   <!-- Sign Up Body -->
-  <div class="modal-body">
+  <div class="modal-body" (keydown)="submitOnEnter($event)">
 
     <label for="firstname">First Name</label>
     <input (keydown)="firstNameError = ''" id="firstname" type="text" [(ngModel)]="user.firstName"
