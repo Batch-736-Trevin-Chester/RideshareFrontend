@@ -1,5 +1,5 @@
 
-<div class="container mainContainer">
+<div class="container mainContainer" (keydown)="submitOnEnter($event)">
     
     <i class="fa fa-user" style="font-family:'FontAwesome';"></i>
        
@@ -43,8 +43,8 @@
             </div>
         </div>
         
-        <button type="submit" class="btn btn-primary myBtn" (click)="updatesContactInfo()">Save</button>
-    </div>
+    <button type="submit" class="btn btn-primary myBtn" (click)="updatesContactInfo()">Save</button>
+</div>
   
         
     
