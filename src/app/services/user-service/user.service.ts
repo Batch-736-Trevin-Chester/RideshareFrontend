@@ -103,6 +103,7 @@ export class UserService {
 
 	// add user method
 	addUser(user :User) :Observable<User> {
+		console.log(user);
 		return this.http.post<User>(this.url, user, {headers: this.headers});
 	}
 
