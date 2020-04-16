@@ -185,9 +185,10 @@ export class UserService {
 	 * @param user
 	 */
 
-	updateUserInfo(user: User) {
+	updateUserInfo(user: User): Observable<object> {
 		// console.log(user);
-		return this.http.put(this.url, user).toPromise();
+		// return this.http.put(this.url, user).toPromise();
+		return this.http.put(this.url, user);
 	}
 	/**
 	 * A GET method that retrieves a driver by Id

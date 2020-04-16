@@ -3,9 +3,6 @@
 
 <ng-template #template>
 
-  <!-- Appears upon successful registration via submitUser() -->
-  <p *ngIf="success != ''" class="success">{{success}}</p>
-
   <!-- Sign Up Header -->
   <div class="modal-header">
     <h4 class="modal-title">Sign Up</h4>
@@ -35,7 +32,7 @@
       class="form-control" />
     <p *ngIf="phoneNumberError != ''" class="error">{{phoneNumberError}}</p>
 
-    <label for="userName">User Name</label>
+    <label for="userName">Username</label>
     <input (keydown)="userNameError = ''" id="userName" type="text" [(ngModel)]="user.userName" class="form-control" />
     <p *ngIf="userNameError != ''" class="error">{{userNameError}}</p>
 
@@ -43,11 +40,12 @@
     <input id="password" type="password" [(ngModel)]="password" class="form-control" />-->
 
     <label id="state">Batch</label>
-    <select class="form-control" [(ngModel)]="user.batch">
+    <select id="batch" class="form-control" [(ngModel)]="user.batch" (change)="batchError = ''">
       <option value="none">
       </option>
       <option *ngFor="let batch of batches" [ngValue]="batch">{{batch.batchNumber}} {{batch.batchLocation}}</option>
     </select>
+    <p *ngIf="batchError != ''" class="error">{{batchError}}</p>
 
     <label for="hAddress">Address</label>
     <input (keydown)="hAddressError = ''" id="hAddress" type="text" [(ngModel)]="user.hAddress" class="form-control" />
@@ -58,7 +56,7 @@
     <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
 
     <label id="hState">State</label>
-    <select (keydown)="hStateError = ''" class="form-control" [(ngModel)]="user.hState" id="hState">
+    <select class="form-control" [(ngModel)]="user.hState" id="hState" (change)="hStateError = ''">
       <option value="none" selected disabled hidden>
       </option>
       <option *ngFor="let state of states" value="{{state}}">{{state}}</option>
@@ -82,6 +80,9 @@
       </div>
     </div>
 
+    <!-- Appears upon successful registration via submitUser() -->
+    <p *ngIf="success != ''" class="success">{{success}}</p>
+
     <!-- Submit Button -->
     <div class="btn-container">
       <button type="submit" class="btn btn-primary register" (click)="submitUser()">Submit</button>
@@ -91,3 +92,14 @@
   </div>
 
 </ng-template>
+
+
+<!-- Possible replacement for 'isDriver' checkboxes -->
+
+<!--         <label class="btn btn-primary">
+          <input name="isDriver" type="radio" id="driver" value="driver" [(ngModel)]="isDriver" /> Driver
+        </label>
+        <br>
+        <label class="btn btn-primary">
+          <input name="isDriver" type="radio" id="rider" value="rider" [(ngModel)]="isRider" /> Rider
+        </label> -->
