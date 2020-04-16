@@ -8,7 +8,7 @@ export class User {
     /**
      * Set username as a string
      */
-    userName: string;
+    userName: string = '';
     /**
      * Attached a batch object
      */
@@ -16,19 +16,19 @@ export class User {
     /**
      * Set first name as a string
      */
-    firstName: string;
+    firstName: string = '';
     /**
      * Set last name as a string
      */
-    lastName: string;
+    lastName: string = '';
     /**
      * Set email as a string
      */
-    email: string;
+    email: string = '';
     /**
      * Set phone number as a string
      */
-    phoneNumber: string;
+    phoneNumber: string = '';
     /**
      * Set active as a boolean
      */
@@ -41,9 +41,9 @@ export class User {
      * Set accepting ride as a boolean
      */
     isAcceptingRides: boolean;
-    hState: string;
-    hAddress: string;
-    hCity: string;
+    hState: string = '';
+    hAddress: string = '';
+    hCity: string = '';
     hZip: number;
     wAddress: string;
     wCity: string;
