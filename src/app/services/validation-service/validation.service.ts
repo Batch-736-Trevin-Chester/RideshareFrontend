@@ -33,32 +33,32 @@ export class ValidationService {
 	}
 
 	/**
-	   * This function is validates the length of the name and checks if there is any numeric values in the name string.
-	   */
+	 * This function is validates the length of the name and checks if there is any numeric values in the name string.
+	 */
 	validateName(name: string) {
 		return /^[a-zA-Z\u00C0-\u017F]+[- ]?[a-zA-Z\u00C0-\u017F]+$/.test(name) && name.length < 30;
 	}
 
 	/**
-	   * This function checks the email that the user entered.
-	   */
+	 * This function checks the email that the user entered.
+	 */
 	validateEmail(email: string) {
 		return /^\w+\.?\w+@\w+\.[a-zA-Z]{2,4}$/.test(email);
 	}
 
 	/**
-	   * This function validates the phone number.
-	   */
+	 * This function validates the phone number.
+	 */
 	validatePhone(phone: string) {
 		return /^\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})$/.test(phone);
 	}
 
 	/**
-	   * This function formats the name string.
-	   */
+	 * This function formats the name string.
+	 */
 	nameFormat(name: string) {
 
-		let newName = '';
+		let newName: string = "";
 
 		newName += name[0].toUpperCase();
 
@@ -76,8 +76,8 @@ export class ValidationService {
 	}
 
 	/**
-	   * This function formats the phone number.
-	   */
+	 * This function formats the phone number.
+	 */
 	phoneFormat(phone: string) {
 		return phone.replace(/[^0-9]/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
 	}
@@ -86,7 +86,7 @@ export class ValidationService {
 	 * This function validates the address
 	 */
 	validateAddress(address: string, city: string, state: string): Observable<Address> {
-		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=AIzaSyBT0pAD73FXkgZNRxnJyyUoRqzlgIe5Zhs`);
+		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=GoogleAPIKey`);
 	}
 
 	/**
