@@ -228,4 +228,34 @@ export class SignupModalComponent implements OnInit {
     }
 
   }
+
+  // RegEx functions
+  validateUsername(username) {
+    const re = new RegExp('^\\w+\\.?\\w+$');
+    return re.test(username);
+  }
+
+  validateName(name) {
+    const re = new RegExp('^[a-zA-Z\\u00C0-\\u017F]+[- ]?[a-zA-Z\\u00C0-\\u017F]+$');
+    return re.test(name);
+  }
+
+  validatePhoneNumber(num) {
+    const re = new RegExp('^\\(?([0-9]{3})\\)?[-.\\s]?([0-9]{3})[-.\\s]?([0-9]{4})$');
+    return re.test(num);
+  }
+
+  validateEmail(email) {
+    const re = new RegExp('^\\w+\\.?\\w+@\\w+\\.[a-zA-Z]{2,4}$');
+    return re.test(email);
+  }
+
+  // Submit on Enter
+  submitOnEnter(pressEvent) {
+    if (pressEvent.keyCode === 13) {
+      pressEvent.preventDefault();
+      this.submitUser();
+    }
+  }
+
 }
