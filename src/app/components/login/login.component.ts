@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
 	 *
 	 */
 	constructor(private modalService: BsModalService, private userService: UserService, private http: HttpClient,
-				private authService: AuthService, public router: Router) { }
+		private authService: AuthService, public router: Router) { }
 
 	/**
 	 * When the component is initialized, the system checks for the session storage to validate. Once validated,
@@ -156,32 +156,36 @@ export class LoginComponent implements OnInit {
 	 */
 
 	login() {
+		// Set error messages to empty
 		this.pwdError = '';
 		this.usernameError = '';
+		this.userNotFound = '';
+		const passValidation = this.validateFields();
+		if (passValidation) {
 
-		this.http.get(`${environment.loginUri}?userName=${this.userName}&passWord=${this.passWord}`)
-			.subscribe(
-				(response) => {
-					// console.log(response);
-					if (response['userName'] != undefined) {
-						this.usernameError = response['userName'][0];
-					}
-					if (response['passWord'] != undefined) {
-						this.pwdError = response['pwdError'][0];
-					}
-					if ((response['name'] != undefined) && (response['userid'] != undefined)) {
-						sessionStorage.setItem('name', response['name']);
-						sessionStorage.setItem('userid', response['userid']);
+			this.http.get(`${environment.loginUri}?userName=${this.userName}&passWord=${this.passWord}`)
+				.subscribe(
+					(response) => {
+						// console.log(response);
+						// if (response['userName'] != undefined) {
+						// 	this.usernameError = response['userName'][0];
+						// }
+						if (response['passWord'] != undefined) {
+							this.pwdError = response['pwdError'][0];
+						}
+						if ((response['name'] != undefined) && (response['userid'] != undefined)) {
+							sessionStorage.setItem('name', response['name']);
+							sessionStorage.setItem('userid', response['userid']);
 
-						// call landing page
-						// this.router.navigate(['landingPage']);
-						location.replace('landingPage');
+							// call landing page
+							// this.router.navigate(['landingPage']);
+							location.replace('landingPage');
+						}
+						if (response['userNotFound'] != undefined) {
+							this.userNotFound = response['userNotFound'][0];
+						}
 					}
-					if (response['userNotFound'] != undefined) {
-						this.userNotFound = response['userNotFound'][0];
-					}
-				}
-			);
+				);
 		/*this.http.get<User[]>(`${environment.userUri}?username=${this.userName}`)
 			.subscribe((user: User[]) => {
 				if (!user.length) {
@@ -196,6 +200,30 @@ export class LoginComponent implements OnInit {
 					}
 				}
 			});*/
+		}
+	}
+
+	validateFields() {
+		let i = 0;
+		if (this.userName === '') {
+			this.usernameError = 'Username field required';
+			i = 1;
+		}
+
+		// can add in validation for password here
+
+		if (i === 1) {
+			return false;
+		}
+		return true;
+	}
+
+	// Submit on Enter
+	submitOnEnter(pressEvent) {
+		if (pressEvent.keyCode === 13) {
+			pressEvent.preventDefault();
+			this.login();
+		}
 	}
 
 

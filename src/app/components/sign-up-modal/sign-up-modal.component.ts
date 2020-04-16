@@ -306,4 +306,12 @@ export class SignupModalComponent implements OnInit {
     return re.test(email);
   }
 
+  // Submit on Enter
+  submitOnEnter(pressEvent) {
+    if (pressEvent.keyCode === 13) {
+      pressEvent.preventDefault();
+      this.submitUser();
+    }
+  }
+
 }
