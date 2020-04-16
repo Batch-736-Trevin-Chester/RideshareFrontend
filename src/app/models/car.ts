@@ -10,9 +10,13 @@ export class Car {
      */
     color: string;
     /**
-     * Set set as a number
+     * Set seats as a number
      */
     seats: number;
+    /**
+     * Set available seats as a number
+     */
+    availableSeats: number;
     /**
      * Set make as a string
      */

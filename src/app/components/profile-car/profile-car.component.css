@@ -9,6 +9,12 @@
     font-size: 16px;
 }
 
+.warning {
+    border-radius: 5px;
+    color: red;
+    font-size: 16px;
+}
+
 .mainContainer {
     margin: 3% auto;
     width: 61%;  
@@ -21,8 +27,8 @@
     border-radius: 10px;
 }
 
-#Nrseats{
-    font-size:10px;
+#Nrseats, #Avseats{
+    font-size:15px;
 }
 
 .form-control {
