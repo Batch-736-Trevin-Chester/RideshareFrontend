@@ -1,16 +1,25 @@
-<a (click)="openModal(template)">Sign up</a >
-  
-<ng-template #template >
+<!-- Reveals the sign-up template onClick -->
+<a (click)="openModal(template)">Sign up</a>
+
+<ng-template #template>
+
+  <!-- Appears upon successful registration via submitUser() -->
   <p *ngIf="success != ''" class="success">{{success}}</p>
+
+  <!-- Sign Up Header -->
   <div class="modal-header">
     <h4 class="modal-title">Sign Up</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+
+  <!-- Sign Up Body -->
   <div class="modal-body">
+
     <label for="firstname">First Name</label>
-    <input (keydown)="firstNameError = ''" id="firstname" type="text" [(ngModel)]="user.firstName" class="form-control" />
+    <input (keydown)="firstNameError = ''" id="firstname" type="text" [(ngModel)]="user.firstName"
+      class="form-control" />
     <p *ngIf="firstNameError != ''" class="error">{{firstNameError}}</p>
 
     <label for="lastname">Last Name</label>
@@ -18,11 +27,12 @@
     <p *ngIf="lastNameError != ''" class="error">{{lastNameError}}</p>
 
     <label for="email">Email</label>
-    <input (keydown)="emailError = ''" id="email" type="email" [(ngModel)]="user.email" class="form-control"/>
+    <input (keydown)="emailError = ''" id="email" type="email" [(ngModel)]="user.email" class="form-control" />
     <p *ngIf="emailError != ''" class="error">{{emailError}}</p>
 
     <label for="phoneNumber">Phone Number</label>
-    <input (keydown)="phoneNumberError = ''" id="phoneNumber" type="text" [(ngModel)]="user.phoneNumber" class="form-control" />
+    <input (keydown)="phoneNumberError = ''" id="phoneNumber" type="text" [(ngModel)]="user.phoneNumber"
+      class="form-control" />
     <p *ngIf="phoneNumberError != ''" class="error">{{phoneNumberError}}</p>
 
     <label for="userName">User Name</label>
@@ -34,9 +44,9 @@
 
     <label id="state">Batch</label>
     <select class="form-control" [(ngModel)]="user.batch">
-          <option value="none" >  
-          </option>
-          <option *ngFor="let batch of batches" [ngValue]="batch">{{batch.batchNumber}} {{batch.batchLocation}}</option>
+      <option value="none">
+      </option>
+      <option *ngFor="let batch of batches" [ngValue]="batch">{{batch.batchNumber}} {{batch.batchLocation}}</option>
     </select>
 
     <label for="hAddress">Address</label>
@@ -48,10 +58,10 @@
     <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
 
     <label id="hState">State</label>
-    <select (keydown)="hStateError = ''" class="form-control" [(ngModel)]="user.hState" id="hState" >
-            <option value="none" selected disabled hidden>  
-            </option>
-            <option *ngFor="let state of states" value="{{state}}">{{state}}</option>
+    <select (keydown)="hStateError = ''" class="form-control" [(ngModel)]="user.hState" id="hState">
+      <option value="none" selected disabled hidden>
+      </option>
+      <option *ngFor="let state of states" value="{{state}}">{{state}}</option>
     </select>
     <p *ngIf="hStateError != ''" class="error">{{hStateError}}</p>
 
@@ -59,19 +69,25 @@
     <input (keydown)="hZipError = ''" type="number" [(ngModel)]="user.hZip" class="form-control" />
     <p *ngIf="hZipError != ''" class="error">{{hZipError}}</p>
 
+    <!-- Driver/Rider Selection -->
     <div class="radiobody">
-    <div class="btn-group" data-toggle="buttons">
+      <div class="btn-group" data-toggle="buttons">
         <label class="btn btn-primary">
-          <input type="checkbox"  id="driver" [(ngModel)]="isDriver" /> Driver
+          <input type="checkbox" id="driver" [(ngModel)]="isDriver" /> Driver
         </label>
         <br>
         <label class="btn btn-primary">
-          <input type="checkbox"  id="rider" [(ngModel)]="isRider"/> Rider
+          <input type="checkbox" id="rider" [(ngModel)]="isRider" /> Rider
         </label>
-  </div>
+      </div>
     </div>
+
+    <!-- Submit Button -->
     <div class="btn-container">
       <button type="submit" class="btn btn-primary register" (click)="submitUser()">Submit</button>
     </div>
+
+
   </div>
-</ng-template> 
+
+</ng-template>

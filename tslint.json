@@ -1,6 +1,7 @@
 {
   "extends": "tslint:recommended",
-  "rules": {
+  "rules": {    
+    "align": [true, "statements", "members"],
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
@@ -24,6 +25,9 @@
     "import-blacklist": [
       true,
       "rxjs/Rx"
+    ],
+    "indent": [
+      false
     ],
     "interface-name": false,
     "max-classes-per-file": false,
@@ -54,11 +58,12 @@
     ],
     "no-empty": false,
     "no-inferrable-types": [
-      true,
+      false,
       "ignore-params"
     ],
     "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
+    "no-string-literal": false,
     "no-switch-case-fall-through": true,
     "no-var-requires": false,
     "object-literal-key-quotes": [
@@ -82,6 +87,7 @@
     "no-outputs-metadata-property": true,
     "template-banana-in-box": true,
     "template-no-negated-async": true,
+    "triple-equals": false,
     "use-lifecycle-interface": true,
     "use-pipe-transform-interface": true
   },
