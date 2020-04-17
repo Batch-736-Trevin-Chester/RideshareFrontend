@@ -1,3 +1,5 @@
+
+
 import { Batch } from './batch';
 
 export class User {

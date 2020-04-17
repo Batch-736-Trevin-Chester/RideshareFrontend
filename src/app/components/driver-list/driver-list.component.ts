@@ -12,6 +12,7 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import { TableData } from "./table-data";
 
+
 @Component({
   selector: "app-driver-list",
   templateUrl: "./driver-list.component.html",
@@ -104,7 +105,7 @@ export class DriverListComponent implements OnInit {
       );
       //get all routes
       this.displayDriversList(this.location, this.drivers);
-      //show drivers on map
+      // show drivers on map
       this.showDriversOnMap(this.location, this.drivers);
     });
   }

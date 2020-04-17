@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root'
+	providedIn: 'root'
 })
 /**
  * This is a car service
@@ -19,7 +19,7 @@ export class CarService {
 	 * An user is created.
 	 */
 
-    url: string = environment.carUri;
+	url: string = environment.carUri;
 	user: User = new User();
 
 	/**
@@ -41,7 +41,7 @@ export class CarService {
 
 	/**
 	 * This function returns an car by user ID.
-	 * @param userId 
+	 * @param userId
 	 */
 
 	getCarByUserId(userId: number) {
@@ -53,24 +53,24 @@ export class CarService {
 	}
 
 	updateCarInfo(car: Car) {
-		//console.log(user);
-		return this.http.put(this.url, car).toPromise();
+		console.log(this.url);
+		return this.http.put(this.url + car.carId, car).toPromise();
 	}
 
 
 
 	/**
 	 * This function creates a car.
-	 * @param car 
-	 * @param userId 
+	 * @param car
+	 * @param userId
 	 */
-	
+
 	createCar(car, userId) {
 
 		this.user.userId = userId;
 		car.user = this.user;
 
-		this.http.post(this.url, car, {observe: 'response'}).subscribe(
+		this.http.post(this.url, car, { observe: 'response' }).subscribe(
 			(response) => {
 				if (response) {
 					this.userService.updateIsDriver(true, userId);
@@ -85,10 +85,10 @@ export class CarService {
 
 	/**
 	 * This function removes a Car.
-	 * @param carId 
+	 * @param carId
 	 */
 
 	removeCar(carId: number) {
-		return this.http.delete<Car>(this.url+carId);
+		return this.http.delete<Car>(this.url + carId);
 	}
 }
