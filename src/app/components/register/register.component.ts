@@ -27,7 +27,7 @@ export class RegisterComponent implements OnInit {
 	user: User = new User();
 
   /**
-   * @constructor 
+   * @constructor
    * @param router Provides an instance of a router.
    * @param userService A dependency of an user service is injected.
    * @param batchService A dependency of a batch service is injected.
@@ -56,7 +56,7 @@ export class RegisterComponent implements OnInit {
 	 * This function allows the user to select the batch location.
 	 */
 	changeLocation(event) {
-		let option = event.target.options.selectedIndex;
+		const option = event.target.options.selectedIndex;
 		this.user.batch.batchNumber = this.batches[option].batchNumber;
 	}
 
@@ -64,9 +64,9 @@ export class RegisterComponent implements OnInit {
 	 * This function creates a driver if all the validations are true.
 	 */
 	signUpDriver() {
-		//if (this.validationService.validateUserName(this.user.userName) && this.validationService.validateName(this.user.firstName) && this.validationService.validateName(this.user.lastName) && this.validationService.validateEmail(this.user.email) && this.validationService.validatePhone(this.user.phoneNumber)) {
+		// if (this.validationService.validateUserName(this.user.userName) && this.validationService.validateName(this.user.firstName) && this.validationService.validateName(this.user.lastName) && this.validationService.validateEmail(this.user.email) && this.validationService.validatePhone(this.user.phoneNumber)) {
 			this.userService.createDriver(this.user, 'driver');
-		//}
+		// }
 	}
 	signUpRider() {
 		if (this.validationService.validateUserName(this.user.userName) && this.validationService.validateName(this.user.firstName) && this.validationService.validateName(this.user.lastName) && this.validationService.validateEmail(this.user.email) && this.validationService.validatePhone(this.user.phoneNumber)) {
