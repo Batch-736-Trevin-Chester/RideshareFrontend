@@ -19,11 +19,12 @@ export class ProfileLocationComponent implements OnInit {
   success: string;
   error: string;
   addError: string;
+  httpResponseError: string;
 
   constructor(private currentUserService: UserService, private validationService: ValidationService) { }
 
   ngOnInit() {
-    this.currentUserService.getUserById2(sessionStorage.getItem("userid")).subscribe((response) => {
+    this.currentUserService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.currentUser = response;
       this.zipcode = response.hZip;
       this.city = response.hCity;
@@ -31,10 +32,16 @@ export class ProfileLocationComponent implements OnInit {
       this.address2 = response.wAddress;
       this.hState = response.hState;
 
+    },
+    error => {
+      // logging can go here
+      this.httpResponseError = 'Server not found. Try again later.';
     });
   }
 
   updatesContactInfo() {
+    this.success = '';
+    this.httpResponseError = '';
     this.currentUser.hZip = this.zipcode;
     this.currentUser.hCity = this.city;
     this.currentUser.hAddress = this.address;
@@ -50,10 +57,10 @@ export class ProfileLocationComponent implements OnInit {
       data => {
         if (data.status === 'OK') {
 
-          let temp = this.currentUser.hAddress.split(' ');
+          const temp = this.currentUser.hAddress.split(' ');
           let count = 0;
 
-          for (let c of data.results[0].address_components) {
+          for (const c of data.results[0].address_components) {
             if (c.types.toString() === 'subpremise') {
               for (let i = 0; i < temp.length; i++) {
                 if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
@@ -124,8 +131,10 @@ export class ProfileLocationComponent implements OnInit {
           this.addError = '';
           this.currentUserService.updateUserInfo(this.currentUser).subscribe(
             res => {
-              console.log(res);
               this.success = 'Updated successfully!';
+            }, error => {
+              // logging can go here
+              this.httpResponseError = 'Server error. Try again later.';
             }
           );
         } else {
@@ -139,6 +148,14 @@ export class ProfileLocationComponent implements OnInit {
       }
     );
 
-    //console.log(this.currentUser);
+    // console.log(this.currentUser);
+  }
+
+  // Submit on Enter
+  submitOnEnter(pressEvent) {
+    if (pressEvent.keyCode === 13) {
+      pressEvent.preventDefault();
+      this.updatesContactInfo();
+    }
   }
 }

@@ -52,16 +52,14 @@
           <p class="error">{{pwdError}}</p>
         </div>
         
-        <!-- "Login Failed" and UserBan Alerts -->
-        <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
+        <!-- UserBan Alerts -->
+        
         <p class="alert alert-danger" *ngIf="banned"><strong>You are banned</strong></p>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" id="sign-in-btn" (click)="login()">Login</button>
-        <br><br>
-        
+        <button type="submit" class="btn btn-primary" id="sign-in-btn" (click)="login()">Login</button>        
+        <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
       </div>
-
     </div>
   </div>
 </ng-template>

@@ -38,6 +38,10 @@ export class ProfileContactComponent implements OnInit {
       this.email = this.profileObject.email;
       this.phone = this.profileObject.phoneNumber;
 
+    },
+    error => {
+      // logging can go here
+      this.httpResponseError = 'Server not found. Try again later.';
     });
 
   }
@@ -71,8 +75,8 @@ export class ProfileContactComponent implements OnInit {
     this.lastNameError = '';
     this.phoneNumberError = '';
     this.emailError = '';
-    this.serverResponseError = '';
     this.success = '';
+    this.serverResponseError = '';
   }
 
   validateFields(): boolean {

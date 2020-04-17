@@ -16,18 +16,32 @@ export class ProfileMembershipComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.userService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.profileObject = response;
-    });
+    },
+      error => {
+        // logging can go here
+        this.httpResponseError = 'Server not found. Try again later.';
+      });
   }
 
   updatesMembershipInfo() {
+    this.success = '';
     this.httpResponseError = '';
     this.userService.updateUserInfo(this.profileObject).subscribe(
-      resp => { },
-      error => {
+      resp => {
+        this.success = 'Updated Successfully!';
+      }, error => {
         // logging can go here
         this.httpResponseError = 'Server error. Try again later.';
       }
     );
-    this.success = 'Updated Successfully!';
   }
+
+  // Submit on Enter
+  submitOnEnter(pressEvent) {
+    if (pressEvent.keyCode === 13) {
+      pressEvent.preventDefault();
+      this.updatesMembershipInfo();
+    }
+  }
+
 }

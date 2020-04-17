@@ -1,5 +1,5 @@
 
-<div class="container mainContainer">
+<div class="container mainContainer" (keydown)="submitOnEnter($event)">
     <i class="fa fa-home" style="font-family:'FontAwesome';"></i>
        
         <h4>Location:</h4>
@@ -101,4 +101,5 @@
             </div>
         
         <button type="submit" class="btn btn-primary myBtn" (click)="updatesContactInfo()">Save</button>
+        <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
     </div>
