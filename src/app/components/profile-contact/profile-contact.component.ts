@@ -24,6 +24,7 @@ export class ProfileContactComponent implements OnInit {
   emailError: string;
   phoneNumberError: string;
   serverResponseError: string;
+  httpResponseError: string;
 
 
   constructor(private router: Router, private userService: UserService) { }
@@ -37,6 +38,10 @@ export class ProfileContactComponent implements OnInit {
       this.email = this.profileObject.email;
       this.phone = this.profileObject.phoneNumber;
 
+    },
+    error => {
+      // logging can go here
+      this.httpResponseError = 'Server not found. Try again later.';
     });
 
   }
@@ -56,6 +61,10 @@ export class ProfileContactComponent implements OnInit {
           } else {
             this.success = 'Updated Successfully!';
           }
+        },
+        (error) => {
+          // this.log.error(error); [previous logging functionality]
+          this.httpResponseError = 'Server error. Try again later.';
         }
       );
     }
@@ -66,8 +75,8 @@ export class ProfileContactComponent implements OnInit {
     this.lastNameError = '';
     this.phoneNumberError = '';
     this.emailError = '';
-    this.serverResponseError = '';
     this.success = '';
+    this.serverResponseError = '';
   }
 
   validateFields(): boolean {

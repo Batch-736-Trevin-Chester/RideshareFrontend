@@ -38,13 +38,13 @@ export class LoginComponent implements OnInit {
 	curPage: number = 1;
 
 	showDropDown: boolean = false;
-	failed: boolean = false;
 	banned: boolean = false;
 
 	pwdError: string;
 	usernameError: string;
 	userNotFound: string;
 	modalRef: BsModalRef;
+	httpResponseError: string;
 	/**
 	 * This is a constructor
 	 * @param userService An user service is instantiated.
@@ -137,10 +137,10 @@ export class LoginComponent implements OnInit {
 	 */
 
 
-	loginFailed() {
-		this.userName = '';
-		this.failed = true;
-	}
+	// loginFailed() {
+	// 	this.userName = '';
+	// 	this.failed = true;
+	// }
 
 	loginBanned() {
 		this.userName = '';
@@ -160,6 +160,7 @@ export class LoginComponent implements OnInit {
 		this.pwdError = '';
 		this.usernameError = '';
 		this.userNotFound = '';
+		this.httpResponseError = '';
 		const passValidation = this.validateFields();
 		if (passValidation) {
 
@@ -184,6 +185,10 @@ export class LoginComponent implements OnInit {
 						if (response['userNotFound'] != undefined) {
 							this.userNotFound = response['userNotFound'][0];
 						}
+					},
+					(error) => {
+						// this.log.error(error); [previous logging functionality]
+						this.httpResponseError = 'Cannot login at this time. Please try again later.';
 					}
 				);
 		/*this.http.get<User[]>(`${environment.userUri}?username=${this.userName}`)

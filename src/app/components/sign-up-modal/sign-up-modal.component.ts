@@ -45,6 +45,7 @@ export class SignupModalComponent implements OnInit {
     hStateError: string;
     hCityError: string;
     hZipError: string;
+    httpResponseError: string;
 
     // Form Success message (redefined and displayed upon successful submitUser())
     success: string;
@@ -75,6 +76,10 @@ export class SignupModalComponent implements OnInit {
         this.userService.getAllUsers().subscribe(
             res => {
                 // console.log(res);
+            },
+            error => {
+                // logging can go here
+                this.httpResponseError = 'Server not found. Try again later.';
             }
         );
 
@@ -82,6 +87,10 @@ export class SignupModalComponent implements OnInit {
             res => {
                 this.batches = res;
             },
+            error => {
+                // logging can go here
+                this.httpResponseError = 'Server not found. Try again later.';
+            }
         );
     }
 
@@ -93,10 +102,117 @@ export class SignupModalComponent implements OnInit {
 
     // MAIN SUBMISSION METHOD
     submitUser() {
+        this.clearMessages();
+
         // Instantiates new user id as 0
         this.user.userId = 0;
 
-        // Empty all error and success messages
+        // Refers work address variables and home address variables to same string
+        this.user.wAddress = this.user.hAddress;
+        this.user.wState = this.user.hState;
+        this.user.wCity = this.user.hCity;
+        this.user.wZip = this.user.hZip;
+        this.setIsDriver();
+
+        // NEW CODE: Validating user fields before submission
+        const fieldsValidated = this.validateFieldsComplete();
+        if (fieldsValidated) {
+            let addVal: boolean;
+            let stateVal: boolean;
+            let cityVal: boolean;
+            let zipVal: boolean;
+            let i = 0;
+            this.validationService.validateAddress(this.user.hAddress, this.user.hCity, this.user.hState).subscribe(
+                data => {
+                    if (data.status === 'OK') {
+
+                        let temp = this.user.hAddress.split(' ');
+                        let count = 0;
+
+                        for (let c of data.results[0].address_components) {
+                            if (c.types.toString() === 'subpremise') {
+                                for (let i = 0; i < temp.length; i++) {
+                                    if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
+                                        c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            if (c.types.toString() === 'street_number') {
+                                for (let i = 0; i < temp.length; i++) {
+                                    if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
+                                        c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            if (c.types.toString() === 'route') {
+                                for (let i = 0; i < temp.length; i++) {
+                                    if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
+                                        c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            if (c.types.toString() === 'locality,political') {
+                                if (this.user.hCity.toLowerCase() === c.short_name.toLowerCase()) {
+                                    cityVal = true;
+                                } else {
+                                    cityVal = false;
+                                    this.hCityError = 'Invalid City';
+                                    i = 1;
+                                }
+                            }
+                            if (c.types.toString() === 'postal_code') {
+                                if (this.user.hZip.toString() === c.short_name) {
+                                    zipVal = true;
+                                } else {
+                                    zipVal = false;
+                                    this.hZipError = 'Invalid Zipcode';
+                                    i = 1;
+                                }
+                            }
+                            if (c.types.toString() === 'administrative_area_level_1,political') {
+                                if (this.user.hState === c.short_name) {
+                                    stateVal = true;
+                                } else {
+                                    stateVal = false;
+                                    this.hStateError = 'Invalid State';
+                                    i = 1;
+                                }
+                            }
+                        }
+                        if (count > 2) {
+                            addVal = true;
+                        } else {
+                            addVal = false;
+                        }
+                    } else {
+                        addVal = false;
+                    }
+                    if (addVal && stateVal && zipVal && cityVal) {
+                        this.userService.addUser(this.user).subscribe(
+                            res => {
+                                console.log(res);
+                                if (i === 0) {
+                                    i = 0;
+                                    this.success = 'Registered successfully!';
+                                }
+                            }, error => {
+                                // logging can go here
+                                this.httpResponseError = 'Server error. Try again later.';
+                            }
+                        );
+                    } else {
+                        this.hAddressError = 'Invalid Address.';
+                        i = 1;
+                    }
+                }
+            );
+        }
+    }
+
+    clearMessages() {
         this.firstNameError = '';
         this.lastNameError = '';
         this.phoneNumberError = '';
@@ -108,33 +224,22 @@ export class SignupModalComponent implements OnInit {
         this.hCityError = '';
         this.hZipError = '';
         this.success = '';
+        this.httpResponseError = '';
+    }
 
-        // Refers work address variables and home address variables to same string
-        this.user.wAddress = this.user.hAddress;
-        this.user.wState = this.user.hState;
-        this.user.wCity = this.user.hCity;
-        this.user.wZip = this.user.hZip;
-
-
+    setIsDriver() {
         const driver = document.getElementById('driver') as HTMLInputElement;
         const rider = document.getElementById('rider') as HTMLInputElement;
 
-        // Determines if Driver or Rider and sets User field
         if (driver.checked == true) {
             this.user.isDriver = true;
         }
         if (rider.checked == true) {
             this.user.isDriver = false;
         }
+    }
 
-
-        const batchDefault = document.getElementById('batch') as HTMLInputElement;
-
-        // console.log(this.user);
-        // console.log(this.validationService.formatAddress(this.user.hAddress, this.user.hCity, this.user.hState))
-
-
-        // NEW CODE: Validating user fields before submission
+    validateFieldsComplete() {
 
         let i = 0;
 
@@ -192,6 +297,7 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
+        const batchDefault = document.getElementById('batch') as HTMLInputElement;
         if (this.user.batch.batchNumber < 1 || batchDefault.value === 'none') {
             this.batchError = 'Batch field required';
             i = 1;
@@ -220,148 +326,10 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
-        let addVal: boolean;
-        let stateVal: boolean;
-        let cityVal: boolean;
-        let zipVal: boolean;
-        this.validationService.validateAddress(this.user.hAddress, this.user.hCity, this.user.hState).subscribe(
-            data => {
-                if (data.status === 'OK') {
-
-                    let temp = this.user.hAddress.split(' ');
-                    let count = 0;
-
-                    for (let c of data.results[0].address_components) {
-                        if (c.types.toString() === 'subpremise') {
-                            for (let i = 0; i < temp.length; i++) {
-                                if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
-                                    c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
-                                    count++;
-                                }
-                            }
-                        }
-                        if (c.types.toString() === 'street_number') {
-                            for (let i = 0; i < temp.length; i++) {
-                                if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
-                                    c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
-                                    count++;
-                                }
-                            }
-                        }
-                        if (c.types.toString() === 'route') {
-                            for (let i = 0; i < temp.length; i++) {
-                                if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
-                                    c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
-                                    count++;
-                                }
-                            }
-                        }
-                        if (c.types.toString() === 'locality,political') {
-                            if (this.user.hCity.toLowerCase() === c.short_name.toLowerCase()) {
-                                cityVal = true;
-                            } else {
-                                cityVal = false;
-                                this.hCityError = 'Invalid City';
-                                i = 1;
-                            }
-                        }
-                        if (c.types.toString() === 'postal_code') {
-                            if (this.user.hZip.toString() === c.short_name) {
-                                zipVal = true;
-                            } else {
-                                zipVal = false;
-                                this.hZipError = 'Invalid Zipcode';
-                                i = 1;
-                            }
-                        }
-                        if (c.types.toString() === 'administrative_area_level_1,political') {
-                            if (this.user.hState === c.short_name) {
-                                stateVal = true;
-                            } else {
-                                stateVal = false;
-                                this.hStateError = 'Invalid State';
-                                i = 1;
-                            }
-                        }
-                    }
-                    if (count > 2) {
-                        addVal = true;
-                    } else {
-                        addVal = false;
-                    }
-                } else {
-                    addVal = false;
-                }
-                if (addVal && stateVal && zipVal && cityVal) {
-                    this.userService.addUser(this.user).subscribe(
-                        res => {
-                            console.log(res);
-                            if (i === 0) {
-                                i = 0;
-                                this.success = 'Registered successfully!';
-                            }
-                            // sets i = 0; sets i = 1 on error; only displays success message if i = 1
-                            // let i = 0;
-                            // if (res.firstName != undefined) {
-                            //   this.firstNameError = res.firstName[0];
-                            //   i = 1;
-                            // }
-                            // if (res.lastName != undefined) {
-                            //   this.lastNameError = res.lastName[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (res.phoneNumber != undefined) {
-                            //   this.phoneNumberError = res.phoneNumber[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (res.email != undefined) {
-                            //   this.emailError = res.email[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (res.userName != undefined) {
-                            //   this.userNameError = res.userName[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (res.hState != undefined) {
-                            //   this.hStateError = res.hState[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (res.hAddress != undefined) {
-                            //   this.hAddressError = res.hAddress[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (res.hCity != undefined) {
-                            //   this.hCityError = res.hCity[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (res.hZip != undefined) {
-                            //   this.hZipError = res.hZip[0];
-                            //   i = 1;
-        
-                            // }
-                            // if (i === 0) {
-                            //   i = 0;
-                            //   this.success = 'Registered successfully!';
-                            // }
-                        }
-                        /*res => {
-                              console.log("failed to add user");
-                              console.log(res);
-                            }*/
-                    );
-                } else {
-                    this.hAddressError = 'Invalid Address.';
-                    i = 1;
-                }
-            }
-        );
+        if (i === 0) {
+            return true;
+        }
+        return false;
     }
 
     // RegEx functions
