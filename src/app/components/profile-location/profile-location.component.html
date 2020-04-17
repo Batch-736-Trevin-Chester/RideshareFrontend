@@ -95,6 +95,8 @@
                         <div class="col-sm-4">
                         <input [(ngModel)]=zipcode type="text" class="form-control" id="zipcode">
                         <p *ngIf="success != ''" class="success">{{success}}</p>
+                        <p *ngIf="error != ''" class="error">{{error}}</p>
+                        <p *ngIf="addError != ''" class="error">{{addError}}</p>
                     </div>
             </div>
         

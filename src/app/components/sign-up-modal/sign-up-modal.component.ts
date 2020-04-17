@@ -222,6 +222,8 @@ export class SignupModalComponent implements OnInit {
 
         let addVal: boolean;
         let stateVal: boolean;
+        let cityVal: boolean;
+        let zipVal: boolean;
         this.validationService.validateAddress(this.user.hAddress, this.user.hCity, this.user.hState).subscribe(
             data => {
                 if (data.status === 'OK') {
@@ -256,18 +258,18 @@ export class SignupModalComponent implements OnInit {
                         }
                         if (c.types.toString() === 'locality,political') {
                             if (this.user.hCity.toLowerCase() === c.short_name.toLowerCase()) {
-                                stateVal = true;
+                                cityVal = true;
                             } else {
-                                stateVal = false;
+                                cityVal = false;
                                 this.hCityError = 'Invalid City';
                                 i = 1;
                             }
                         }
                         if (c.types.toString() === 'postal_code') {
                             if (this.user.hZip.toString() === c.short_name) {
-                                stateVal = true;
+                                zipVal = true;
                             } else {
-                                stateVal = false;
+                                zipVal = false;
                                 this.hZipError = 'Invalid Zipcode';
                                 i = 1;
                             }
@@ -290,7 +292,7 @@ export class SignupModalComponent implements OnInit {
                 } else {
                     addVal = false;
                 }
-                if (addVal && stateVal) {
+                if (addVal && stateVal && zipVal && cityVal) {
                     this.userService.addUser(this.user).subscribe(
                         res => {
                             console.log(res);
