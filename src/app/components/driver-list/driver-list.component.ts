@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user-service/user.service';
@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { BatchService } from 'src/app/services/batch-service/batch.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+
 
 
 @Component({
@@ -17,19 +19,21 @@ import { environment } from '../../../environments/environment';
   templateUrl: './driver-list.component.html',
   styleUrls: ['./driver-list.component.css']
 })
-export class DriverListComponent implements OnInit {
+export class DriverListComponent implements OnInit, AfterViewInit {
 
   location: string = 'Morgantown, WV';
   mapProperties: {};
   availableCars: Array<any> = [];
   drivers: Array<any> = [];
   tempCar: Car;
+  public dataSource = new MatTableDataSource<User>();
 
-
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild('map', null) mapElement: any;
   map: google.maps.Map;
 
   constructor(private http: HttpClient, private userService: UserService, private carService: CarService) { }
+  
 
   ngOnInit() {
     this.drivers = [];
@@ -68,6 +72,11 @@ export class DriverListComponent implements OnInit {
       this.showDriversOnMap(this.location, this.drivers);
     });
   }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
