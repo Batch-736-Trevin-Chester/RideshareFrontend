@@ -53,7 +53,7 @@
         </div>
         
         <!-- "Login Failed" and UserBan Alerts -->
-        <p class="alert alert-danger" *ngIf="failed"><strong>Login Failed!</strong></p>
+        <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
         <p class="alert alert-danger" *ngIf="banned"><strong>You are banned</strong></p>
 
         <!-- Submit Button -->

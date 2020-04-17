@@ -39,6 +39,7 @@
                 <input type="text" class="form-control" id="phone" [(ngModel)]=phone value="{{ profileObject?.phoneNumber }}">
                 <p *ngIf="phoneNumberError != ''" class="error">{{phoneNumberError}}</p>
                 <p *ngIf="serverResponseError != ''" class="error">{{serverResponseError}}</p>
+                <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
                 <p *ngIf="success != ''" class="success">{{success}}</p>
             </div>
         </div>

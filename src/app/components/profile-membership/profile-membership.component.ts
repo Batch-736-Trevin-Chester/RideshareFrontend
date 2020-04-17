@@ -7,21 +7,27 @@ import { User } from 'src/app/models/user';
   styleUrls: ['./profile-membership.component.css']
 })
 export class ProfileMembershipComponent implements OnInit {
-  profileObject : User;
+  profileObject: User = new User();
   currentUser: any = '';
-  isDriver: boolean;
-  active: boolean;
   success: string;
+  httpResponseError: string;
   constructor(private userService: UserService) { }
+
   ngOnInit() {
-    this.currentUser = this.userService.getUserById2(sessionStorage.getItem("userid")).subscribe((response)=>{
+    this.currentUser = this.userService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.profileObject = response;
     });
   }
-  updatesMembershipInfo(){
-    this.profileObject.isDriver = this.isDriver;
-    this.profileObject.active = this.active;
-    this.userService.updateUserInfo(this.profileObject);
-    this.success = "Updated Successfully!";
+
+  updatesMembershipInfo() {
+    this.httpResponseError = '';
+    this.userService.updateUserInfo(this.profileObject).subscribe(
+      resp => { },
+      error => {
+        // logging can go here
+        this.httpResponseError = 'Server error. Try again later.';
+      }
+    );
+    this.success = 'Updated Successfully!';
   }
 }

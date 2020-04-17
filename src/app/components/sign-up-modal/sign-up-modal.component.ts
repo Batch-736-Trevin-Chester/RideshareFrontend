@@ -129,7 +129,7 @@ export class SignupModalComponent implements OnInit {
 
     const batchDefault = document.getElementById('batch') as HTMLInputElement;
 
-    console.log(this.user);
+    // console.log(this.user);
 
     // NEW CODE: Validating user fields before submission
 
