@@ -220,71 +220,69 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
-        if (i === 0) {
-            i = 0;
-            this.success = 'Registered successfully!';
-        }
-
         let addVal: boolean;
+        let stateVal: boolean;
         this.validationService.validateAddress(this.user.hAddress, this.user.hCity, this.user.hState).subscribe(
             data => {
-                console.log(data);
                 if (data.status === 'OK') {
-                    console.log("good status");
-                    console.log(data.results[0].formatted_address);
 
                     let temp = this.user.hAddress.split(' ');
                     let count = 0;
 
                     for (let c of data.results[0].address_components) {
-                        console.log(c.types);
-                        if (c.types === ['subpremise']) {
+                        if (c.types.toString() === 'subpremise') {
                             for (let i = 0; i < temp.length; i++) {
                                 if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
                                     c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
                                     count++;
-                                    console.log('in apt num: ' + count);
-                                    break;
                                 }
                             }
                         }
-                        if (c.types === ['street_number']) {
+                        if (c.types.toString() === 'street_number') {
                             for (let i = 0; i < temp.length; i++) {
                                 if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
                                     c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
                                     count++;
-                                    console.log('in street num: ' + count);
-                                    break;
                                 }
                             }
                         }
-                        if (c.types === ['route']) {
+                        if (c.types.toString() === 'route') {
                             for (let i = 0; i < temp.length; i++) {
                                 if (c.long_name.toLowerCase().includes(temp[i].toLowerCase()) ||
                                     c.short_name.toLowerCase().includes(temp[i].toLowerCase())) {
                                     count++;
-                                    console.log('in street: ' + count);
                                 }
                             }
                         }
-                        if (c.types === ['locality', 'political']) {
-                            if (this.user.hCity.toLowerCase === c.short_name.toLowerCase) {
-                                addVal = false;
+                        if (c.types.toString() === 'locality,political') {
+                            if (this.user.hCity.toLowerCase() === c.short_name.toLowerCase()) {
+                                stateVal = true;
+                            } else {
+                                stateVal = false;
+                                this.hCityError = 'Invalid City';
+                                i = 1;
                             }
                         }
-                        if (c.types === ['postal_code']) {
+                        if (c.types.toString() === 'postal_code') {
                             if (this.user.hZip.toString() === c.short_name) {
-                                addVal = false;
+                                stateVal = true;
+                            } else {
+                                stateVal = false;
+                                this.hZipError = 'Invalid Zipcode';
+                                i = 1;
                             }
                         }
-                        if (c.types === ['administrative_area_level_1', 'politcal']) {
+                        if (c.types.toString() === 'administrative_area_level_1,political') {
                             if (this.user.hState === c.short_name) {
-                                addVal = false;
+                                stateVal = true;
+                            } else {
+                                stateVal = false;
+                                this.hStateError = 'Invalid State';
+                                i = 1;
                             }
                         }
                     }
-                    console.log(count);
-                    if (count > 1) {
+                    if (count > 2) {
                         addVal = true;
                     } else {
                         addVal = false;
@@ -292,72 +290,76 @@ export class SignupModalComponent implements OnInit {
                 } else {
                     addVal = false;
                 }
+                if (addVal && stateVal) {
+                    this.userService.addUser(this.user).subscribe(
+                        res => {
+                            console.log(res);
+                            if (i === 0) {
+                                i = 0;
+                                this.success = 'Registered successfully!';
+                            }
+                            // sets i = 0; sets i = 1 on error; only displays success message if i = 1
+                            // let i = 0;
+                            // if (res.firstName != undefined) {
+                            //   this.firstNameError = res.firstName[0];
+                            //   i = 1;
+                            // }
+                            // if (res.lastName != undefined) {
+                            //   this.lastNameError = res.lastName[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (res.phoneNumber != undefined) {
+                            //   this.phoneNumberError = res.phoneNumber[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (res.email != undefined) {
+                            //   this.emailError = res.email[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (res.userName != undefined) {
+                            //   this.userNameError = res.userName[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (res.hState != undefined) {
+                            //   this.hStateError = res.hState[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (res.hAddress != undefined) {
+                            //   this.hAddressError = res.hAddress[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (res.hCity != undefined) {
+                            //   this.hCityError = res.hCity[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (res.hZip != undefined) {
+                            //   this.hZipError = res.hZip[0];
+                            //   i = 1;
+        
+                            // }
+                            // if (i === 0) {
+                            //   i = 0;
+                            //   this.success = 'Registered successfully!';
+                            // }
+                        }
+                        /*res => {
+                              console.log("failed to add user");
+                              console.log(res);
+                            }*/
+                    );
+                } else {
+                    this.hAddressError = 'Invalid Address.';
+                    i = 1;
+                }
             }
         );
-        if (addVal) {
-            this.userService.addUser(this.user).subscribe(
-                res => {
-                    console.log(res);
-                    // sets i = 0; sets i = 1 on error; only displays success message if i = 1
-                    // let i = 0;
-                    // if (res.firstName != undefined) {
-                    //   this.firstNameError = res.firstName[0];
-                    //   i = 1;
-                    // }
-                    // if (res.lastName != undefined) {
-                    //   this.lastNameError = res.lastName[0];
-                    //   i = 1;
-
-                    // }
-                    // if (res.phoneNumber != undefined) {
-                    //   this.phoneNumberError = res.phoneNumber[0];
-                    //   i = 1;
-
-                    // }
-                    // if (res.email != undefined) {
-                    //   this.emailError = res.email[0];
-                    //   i = 1;
-
-                    // }
-                    // if (res.userName != undefined) {
-                    //   this.userNameError = res.userName[0];
-                    //   i = 1;
-
-                    // }
-                    // if (res.hState != undefined) {
-                    //   this.hStateError = res.hState[0];
-                    //   i = 1;
-
-                    // }
-                    // if (res.hAddress != undefined) {
-                    //   this.hAddressError = res.hAddress[0];
-                    //   i = 1;
-
-                    // }
-                    // if (res.hCity != undefined) {
-                    //   this.hCityError = res.hCity[0];
-                    //   i = 1;
-
-                    // }
-                    // if (res.hZip != undefined) {
-                    //   this.hZipError = res.hZip[0];
-                    //   i = 1;
-
-                    // }
-                    // if (i === 0) {
-                    //   i = 0;
-                    //   this.success = 'Registered successfully!';
-                    // }
-                }
-                /*res => {
-                      console.log("failed to add user");
-                      console.log(res);
-                    }*/
-            );
-        } else {
-            alert('Invalid Address');
-        }
-
     }
 
     // RegEx functions
