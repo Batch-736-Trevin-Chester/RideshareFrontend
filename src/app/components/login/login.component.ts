@@ -14,9 +14,12 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 })
 
 
-/**
- * This is the login component
- */
+/*
+*  Name: Chris Rodgers/Stephen Orgill		Timestamp: 4/20/20 9:28 am
+*  Description: This class validates username and password on attempted login.
+*  If login is successful, name and userid are set in session storage.
+*/
+
 export class LoginComponent implements OnInit {
 
 	/**
@@ -132,29 +135,26 @@ export class LoginComponent implements OnInit {
 		this.users = this.allUsers.slice(this.curPage * 5 - 5, this.curPage * 5);
 	}
 
-	/**
-	 * A function that indicate a fail to login
-	 */
-
-
-	// loginFailed() {
-	// 	this.userName = '';
-	// 	this.failed = true;
-	// }
 
 	loginBanned() {
 		this.userName = '';
 		this.banned = true;
 	}
 
+	/*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:36 am
+	*  Description: Triggers reveal of login modal on click of login button.
+	*  Returns void.
+	*/
 	openModal(template: TemplateRef<any>) {
 		this.modalRef = this.modalService.show(template);
 	}
 
-	/**
-	 * A login function
-	 */
-
+	/*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:39 am
+	*  Description: Submits username and password for validation. Sets name and userid on success.
+	*  Returns void.
+	*/
 	login() {
 		// Set error messages to empty
 		this.pwdError = '';
@@ -167,10 +167,6 @@ export class LoginComponent implements OnInit {
 			this.http.get(`${environment.loginUri}?userName=${this.userName}&passWord=${this.passWord}`)
 				.subscribe(
 					(response) => {
-						// console.log(response);
-						// if (response['userName'] != undefined) {
-						// 	this.usernameError = response['userName'][0];
-						// }
 						if (response['passWord'] != undefined) {
 							this.pwdError = response['pwdError'][0];
 						}
@@ -178,8 +174,6 @@ export class LoginComponent implements OnInit {
 							sessionStorage.setItem('name', response['name']);
 							sessionStorage.setItem('userid', response['userid']);
 
-							// call landing page
-							// this.router.navigate(['landingPage']);
 							location.replace('landingPage');
 						}
 						if (response['userNotFound'] != undefined) {
@@ -191,23 +185,15 @@ export class LoginComponent implements OnInit {
 						this.httpResponseError = 'Cannot login at this time. Please try again later.';
 					}
 				);
-		/*this.http.get<User[]>(`${environment.userUri}?username=${this.userName}`)
-			.subscribe((user: User[]) => {
-				if (!user.length) {
-					this.loginFailed();
-				}
-				else if(this.chosenUser.active == false){
-					this.loginBanned();
-				}
-				else {
-					if (!this.authService.login(user[0], this.chosenUser.userName)) {
-						this.loginFailed();
-					}
-				}
-			});*/
 		}
 	}
 
+
+	/*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:42 am
+	*  Description: Checks each login field for completeness. Currently only checks username.
+	*  Returns boolean: True if no errors; false if error exists.
+	*/
 	validateFields() {
 		let i = 0;
 		if (this.userName === '') {
@@ -223,6 +209,12 @@ export class LoginComponent implements OnInit {
 		return true;
 	}
 
+
+/*
+*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:43 am
+*  Description: Linked to HTML. Executes login() upon pressing enter.
+*  Returns void.
+*/
 	// Submit on Enter
 	submitOnEnter(pressEvent) {
 		if (pressEvent.keyCode === 13) {
