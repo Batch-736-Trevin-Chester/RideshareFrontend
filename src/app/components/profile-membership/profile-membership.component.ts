@@ -7,21 +7,41 @@ import { User } from 'src/app/models/user';
   styleUrls: ['./profile-membership.component.css']
 })
 export class ProfileMembershipComponent implements OnInit {
-  profileObject : User;
+  profileObject: User = new User();
   currentUser: any = '';
-  isDriver: boolean;
-  active: boolean;
   success: string;
+  httpResponseError: string;
   constructor(private userService: UserService) { }
+
   ngOnInit() {
-    this.currentUser = this.userService.getUserById2(sessionStorage.getItem("userid")).subscribe((response)=>{
+    this.currentUser = this.userService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.profileObject = response;
-    });
+    },
+      error => {
+        // logging can go here
+        this.httpResponseError = 'Server not found. Try again later.';
+      });
   }
-  updatesMembershipInfo(){
-    this.profileObject.isDriver = this.isDriver;
-    this.profileObject.active = this.active;
-    this.userService.updateUserInfo(this.profileObject);
-    this.success = "Updated Successfully!";
+
+  updatesMembershipInfo() {
+    this.success = '';
+    this.httpResponseError = '';
+    this.userService.updateUserInfo(this.profileObject).subscribe(
+      resp => {
+        this.success = 'Updated Successfully!';
+      }, error => {
+        // logging can go here
+        this.httpResponseError = 'Server error. Try again later.';
+      }
+    );
   }
+
+  // Submit on Enter
+  submitOnEnter(pressEvent) {
+    if (pressEvent.keyCode === 13) {
+      pressEvent.preventDefault();
+      this.updatesMembershipInfo();
+    }
+  }
+
 }

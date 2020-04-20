@@ -52,9 +52,8 @@ export class CarService {
 		return this.http.get<Car>(`${this.url}users/${userId}`);
 	}
 
-	updateCarInfo(car: Car) {
-		console.log(this.url);
-		return this.http.put(this.url + car.carId, car).toPromise();
+	updateCarInfo(car: Car): Observable<object> {
+		return this.http.put(this.url + car.carId, car);
 	}
 
 

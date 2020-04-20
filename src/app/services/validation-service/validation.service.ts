@@ -1,4 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Address } from 'src/app/models/address';
+
 
 @Injectable({
 	providedIn: 'root'
@@ -7,9 +11,13 @@ export class ValidationService {
 	/**
 	 * This is the contructor for the validation service.
 	 */
-	constructor() { }
+	constructor(private http: HttpClient) { }
 
-	/** 
+	googleUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
+	// key = `${Response['googleMapAPIKey'][0]}`
+	private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+	/**
    * this function validates the number of seats of the car.
    * @function
    * @returns {boolean}
@@ -55,7 +63,7 @@ export class ValidationService {
 		newName += name[0].toUpperCase();
 
 		for (let i = 1; i < name.length; i++) {
-			if (name.charAt(i) === " " || name.charAt(i) === "-") {
+			if (name.charAt(i) === ' ' || name.charAt(i) === '-') {
 				newName += name[i];
 				newName += name[i + 1].toUpperCase();
 				i++;
@@ -71,7 +79,32 @@ export class ValidationService {
 	 * This function formats the phone number.
 	 */
 	phoneFormat(phone: string) {
-		return phone.replace(/[^0-9]/g, '').replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+		return phone.replace(/[^0-9]/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
 	}
 
+	/**
+	 * This function validates the address
+	 */
+	validateAddress(address: string, city: string, state: string): Observable<Address> {
+		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=`);
+	}
+
+	/**
+	 * a function that returns an address formatted for google API
+	 * 
+	 * @param address some address
+	 * @param city some city
+	 * @param state some state
+	 */
+	formatAddress(address: string, city: string, state: string) {
+		// 4300+Lost+Oasis+Hollow,+Austin,+TX
+		let temp = '';
+		let newAddress = address.split(' ');
+		for (let i = 0; i < newAddress.length; i++) {
+			temp += newAddress[i] + '+';
+		}
+		temp = temp.substring(0, temp.length - 1);
+		temp += ',+' + city + ',+' + state;
+		return temp;
+	}
 }
