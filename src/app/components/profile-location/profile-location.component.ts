@@ -8,6 +8,12 @@ import { ValidationService } from 'src/app/services/validation-service/validatio
   templateUrl: './profile-location.component.html',
   styleUrls: ['./profile-location.component.css']
 })
+
+/*
+*  Name: Chris Rodgers/Stephen Orgill		Timestamp: 4/20/20 10:14 am
+*  Description: This class updates an existing user's location information. Uses ValidationService address checks.
+*
+*/
 export class ProfileLocationComponent implements OnInit {
 
   zipcode: number;
@@ -23,6 +29,11 @@ export class ProfileLocationComponent implements OnInit {
 
   constructor(private currentUserService: UserService, private validationService: ValidationService) { }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:16 am
+  *  Description: OnInit: Requests current user from SessionStorage and populates input fields accordingly.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   ngOnInit() {
     this.currentUserService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.currentUser = response;
@@ -39,7 +50,12 @@ export class ProfileLocationComponent implements OnInit {
     });
   }
 
-  updatesContactInfo() {
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:16 am
+  *  Description: Submits updated info to server if address requirements are met.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
+  updateAddressInfo() {
     this.success = '';
     this.httpResponseError = '';
     this.currentUser.hZip = this.zipcode;
@@ -147,15 +163,17 @@ export class ProfileLocationComponent implements OnInit {
         }
       }
     );
-
-    // console.log(this.currentUser);
   }
 
-  // Submit on Enter
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:17 am
+  *  Description: Linked to HTML. Executes updateAddressInfo() upon pressing enter.
+  *  Returns void.
+  */
   submitOnEnter(pressEvent) {
     if (pressEvent.keyCode === 13) {
       pressEvent.preventDefault();
-      this.updatesContactInfo();
+      this.updateAddressInfo();
     }
   }
 }

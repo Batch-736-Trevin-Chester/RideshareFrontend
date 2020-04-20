@@ -14,6 +14,12 @@ import { Address } from 'src/app/models/address';
     templateUrl: './sign-up-modal.component.html',
     styleUrls: ['./sign-up-modal.component.css']
 })
+
+/*
+*  Name: Chris Rodgers/Stephen Orgill		Timestamp: 4/20/20 9:46 am
+*  Description: This class registers a new user after validating their inputed information.
+*  Form is submitted only if each field meets specific requirements.
+*/
 export class SignupModalComponent implements OnInit {
     // Form Variables (linked to nothing right now)
     fname: string;
@@ -64,24 +70,22 @@ export class SignupModalComponent implements OnInit {
     constructor(private modalService: BsModalService, private userService: UserService,
         private batchService: BatchService, private validationService: ValidationService) { }
 
-    /*
-    Uses (number of uses):
-      modalService (1): shows registration modal on click of "Sign Up"
-      userService (2): getting all users and adding a user
-      batchService (1): getAllBatchesByLocation1, onInit populates batches array
-      validationService (0)
-    */
-
+	/*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:49 am
+    *  Description: OnInit: Acquires batches by location for the user to choose from.
+    *   If the server is down, an error is displayed.
+	*  Returns void.
+	*/
     ngOnInit() {
-        this.userService.getAllUsers().subscribe(
-            res => {
-                // console.log(res);
-            },
-            error => {
-                // logging can go here
-                this.httpResponseError = 'Server not found. Try again later.';
-            }
-        );
+        // this.userService.getAllUsers().subscribe(
+        //     res => {
+        //         // console.log(res);
+        //     },
+        //     error => {
+        //         // logging can go here
+        //         this.httpResponseError = 'Server not found. Try again later.';
+        //     }
+        // );
 
         this.batchService.getAllBatchesByLocation1().subscribe(
             res => {
@@ -100,7 +104,12 @@ export class SignupModalComponent implements OnInit {
         this.modalRef = this.modalService.show(template);
     }
 
-    // MAIN SUBMISSION METHOD
+	/*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:36 am
+    *  Description: MAIN SUBMISSION METHOD. Validates fields through validateFieldsComplete() and validateService().
+    *   Upon successful validation, submits user to server.
+	*  Returns void.
+	*/
     submitUser() {
         this.clearMessages();
 
@@ -122,6 +131,8 @@ export class SignupModalComponent implements OnInit {
             let cityVal: boolean;
             let zipVal: boolean;
             let i = 0;
+
+            // ValidationService provides address validation using Google API. Invalid addresses prevent user registration.
             this.validationService.validateAddress(this.user.hAddress, this.user.hCity, this.user.hState).subscribe(
                 data => {
                     if (data.status === 'OK') {
@@ -212,6 +223,11 @@ export class SignupModalComponent implements OnInit {
         }
     }
 
+    /*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:56 am
+	*  Description: Sets all error messages back to empty strings. Called at the beginning of submitUser().
+	*  Returns void.
+	*/
     clearMessages() {
         this.firstNameError = '';
         this.lastNameError = '';
@@ -227,6 +243,11 @@ export class SignupModalComponent implements OnInit {
         this.httpResponseError = '';
     }
 
+    /*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:57 am
+	*  Description: Sets user.isDriver based on driver/rider selection interface.
+	*  Returns void.
+	*/
     setIsDriver() {
         const driver = document.getElementById('driver') as HTMLInputElement;
         const rider = document.getElementById('rider') as HTMLInputElement;
@@ -239,6 +260,11 @@ export class SignupModalComponent implements OnInit {
         }
     }
 
+    /*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:58 am
+	*  Description: Checks each field against specific requirements. Called in submitUser().
+	*  Returns boolean: True if no errors; false if errors exist.
+	*/
     validateFieldsComplete() {
 
         let i = 0;
@@ -332,7 +358,23 @@ export class SignupModalComponent implements OnInit {
         return false;
     }
 
-    // RegEx functions
+    /*
+    *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:00 am
+    *  Description: Linked to HTML. Executes submitUser() upon pressing enter.
+    *  Returns void.
+    */
+    submitOnEnter(pressEvent) {
+        if (pressEvent.keyCode === 13) {
+            pressEvent.preventDefault();
+            this.submitUser();
+        }
+    }
+
+/*
+*  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:00 am
+*  Description: Regex functions used for validateFieldsComplete().
+*  Returns booleans: True if passing test; false if failing test.
+*/
     validateUsername(username) {
         const re = new RegExp('^\\w+\\.?\\w+$');
         return re.test(username);
@@ -351,14 +393,6 @@ export class SignupModalComponent implements OnInit {
     validateEmail(email) {
         const re = new RegExp('^\\w+\\.?\\w+@\\w+\\.[a-zA-Z]{2,4}$');
         return re.test(email);
-    }
-
-    // Submit on Enter
-    submitOnEnter(pressEvent) {
-        if (pressEvent.keyCode === 13) {
-            pressEvent.preventDefault();
-            this.submitUser();
-        }
     }
 
 }
