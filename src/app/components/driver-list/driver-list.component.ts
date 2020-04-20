@@ -32,25 +32,23 @@ export class DriverListComponent implements OnInit {
     {
       title: "Name",
       name: "name",
-      filtering: { filterString: "", placeholder: "Filter by name" }
     },
     {
       title: "Distance",
-      name: "distance",
+      name: "email",
       filtering: { filterString: "", placeholder: "Filter by distance" }
     },
     {
       title: "Time",
       className: ["office-header", "text-success"],
-      name: "time",
-      sort: "time",
+      name: "origin",
+      sort: "origin",
       filtering: { filterString: "", placeholder: "Filter by time" }
     },
     {
       title: "View Info.",
-      name: "viewInfo",
+      name: "phone",
       sort: "",
-      filtering: { filterString: "", placeholder: "Filter by view" }
     }
   ];
   public page: number = 1;
@@ -66,18 +64,17 @@ export class DriverListComponent implements OnInit {
     className: ["table-striped", "table-bordered"]
   };
 
-  private data: Array<any> = TableData;
+  private data: Array<any>;
 
   constructor(private http: HttpClient, private userService: UserService) {
-    this.length = this.data.length;
   }
   //  --------END OF EXAMPLE CODE--------
-
+  
   ngOnInit(): void {
-    this.onChangeTable(this.config);
+    
     this.drivers = [];
     this.userService.getRidersForLocation1(this.location).subscribe(res => {
-      //console.log(res);
+      console.log(res);
       res.forEach(element => {
         this.drivers.push({
           id: element.userId,
@@ -87,6 +84,11 @@ export class DriverListComponent implements OnInit {
           phone: element.phoneNumber
         });
       });
+      console.log(this.drivers);
+      this.data = this.drivers;
+      this.length = this.data.length;
+      console.log(this.data);
+      this.onChangeTable(this.config);
     });
 
     this.getGoogleApi();
@@ -103,14 +105,14 @@ export class DriverListComponent implements OnInit {
         this.mapElement.nativeElement,
         this.mapProperties
       );
-      //get all routes
+      // get all routes
       this.displayDriversList(this.location, this.drivers);
       // show drivers on map
       this.showDriversOnMap(this.location, this.drivers);
     });
   }
 
- 
+
 
 
   sleep(ms) {
@@ -119,7 +121,7 @@ export class DriverListComponent implements OnInit {
 
   getGoogleApi() {
     this.http.get(`${environment.loginUri}getGoogleApi`).subscribe(response => {
-      //console.log(response);
+      // console.log(response);
       if (response["googleMapAPIKey"] != undefined) {
         new Promise(resolve => {
           let script: HTMLScriptElement = document.createElement("script");
@@ -153,9 +155,9 @@ export class DriverListComponent implements OnInit {
         origin: origin,
         destination: destination,
         travelMode: "DRIVING"
-        //avoidTolls: true
+        // avoidTolls: true
       },
-      function(response, status) {
+      function (response, status) {
         if (status === "OK") {
           display.setDirections(response);
         } else {
@@ -166,7 +168,7 @@ export class DriverListComponent implements OnInit {
   }
   displayDriversList(origin, drivers) {
     let origins = [];
-    //set origin
+    // set origin
     origins.push(origin);
 
     var outputDiv = document.getElementById("output");
@@ -181,16 +183,16 @@ export class DriverListComponent implements OnInit {
           avoidHighways: false,
           avoidTolls: false
         },
-        function(response, status) {
+         function (response, status) {
           if (status !== "OK") {
             alert("Error was: " + status);
           } else {
             var originList = response.originAddresses;
             var destinationList = response.destinationAddresses;
             var results = response.rows[0].elements;
-            //console.log(results[0].distance.text);
+            // console.log(results[0].distance.text);
             var name = element.name;
-            outputDiv.innerHTML += `<tr><td class="col">${name}</td>
+            /* outputDiv.innerHTML += `<tr><td class="col">${name}</td>
                                     <td class="col">${results[0].distance.text}</td>
                                     <td class="col">${results[0].duration.text}</td>
                                     <td class="col">
@@ -220,10 +222,10 @@ export class DriverListComponent implements OnInit {
                                     <div class="col-lg-6">
                                         <div #maps id="gmap" class="img-responsive"></div>
                                     </div>
-                                  </td></tr>`;
+                                  </td></tr>`; */
           }
         }
-      );
+      ); 
     });
   }
 
@@ -267,8 +269,10 @@ export class DriverListComponent implements OnInit {
 
   changeFilter(data: any, config: any): any {
     let filteredData: Array<any> = data;
+    console.log(data);
     this.columns.forEach((column: any) => {
       if (column.filtering) {
+        console.log(column.filtering);
         filteredData = filteredData.filter((item: any) => {
           return item[column.name].match(column.filtering.filterString);
         });
