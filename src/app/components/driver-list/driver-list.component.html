@@ -1,5 +1,5 @@
 <div class="container-fluid mt-5">
-  <div *ngIf = "data" class="row">
+  <div *ngIf="data" class="row">
     <div class="col-lg-8">
       <!-- <div class="form-group">
         <h4>Origin</h4>
@@ -16,15 +16,15 @@
       </div>
       <p id="total"></p> -->
 
-    <h4>Driver's List</h4>
-      <ng-table [config]="config" (tableChanged)="onChangeTable(config)" (cellClicked)="onCellClick($event)"
+      <h4>Driver's List</h4>
+      <ng-table [config]="config" (tableChanged)="onChangeTable(config)" (cellClicked)="onCellClick($event, template)"
         [rows]="rows" [columns]="columns">
       </ng-table>
-       <pagination *ngIf= "config.paging" class= "pagination-sm" [(ngModel)]= "page" [totalItems]= "length"
-        [itemsPerPage]= "itemsPerPage" [maxSize]= "maxSize" [boundaryLinks]= "true" [rotate]= "false"
-        (pageChanged)= "onChangeTable(config, $event)" (numPages)= "numPages = $event">
+      <pagination *ngIf="config.paging" class="pagination-sm" [(ngModel)]="page" [totalItems]="length"
+        [itemsPerPage]="itemsPerPage" [maxSize]="maxSize" [boundaryLinks]="true" [rotate]="false"
+        (pageChanged)="onChangeTable(config, $event)" (numPages)="numPages = $event">
       </pagination>
-       <pre *ngIf="config.paging" class="card card-block card-header">Page: {{page}} / {{numPages}}</pre>
+      <pre *ngIf="config.paging" class="card card-block card-header">Page: {{page}} / {{numPages}}</pre>
     </div>
     <div class="col-lg-4">
       <h4>Directions:</h4>
@@ -33,4 +33,19 @@
   </div>
 </div>
 
+<ng-template #template id="template" tabindex="-1">
 
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalCenteredLabel">Contact Info:</h5>
+    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button> -->
+  </div>
+  <div class="modal-body">
+    <h1>{{chosenCell.name}}</h1>
+    <h3>Email: {{chosenCell.email}}</h3>
+    <h3>Phone: {{chosenCell.phone}} </h3>
+    <h3>Home: {{chosenCell.origin}} </h3>
+  </div>
+
+</ng-template>

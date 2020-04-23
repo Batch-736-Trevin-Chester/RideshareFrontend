@@ -1,54 +1,59 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { User } from "src/app/models/user";
-import { UserService } from "src/app/services/user-service/user.service";
-import { AuthService } from "src/app/services/auth-service/auth.service";
-import { Batch } from "src/app/models/batch";
-import { Car } from "src/app/models/car";
-import { CarService } from "src/app/services/car-service/car.service";
-import { Router } from "@angular/router";
-import { BatchService } from "src/app/services/batch-service/batch.service";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import { TableData } from "./table-data";
-
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { User } from 'src/app/models/user';
+import { UserService } from 'src/app/services/user-service/user.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+import { Batch } from 'src/app/models/batch';
+import { Car } from 'src/app/models/car';
+import { CarService } from 'src/app/services/car-service/car.service';
+import { Router } from '@angular/router';
+import { BatchService } from 'src/app/services/batch-service/batch.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 @Component({
-  selector: "app-driver-list",
-  templateUrl: "./driver-list.component.html",
-  styleUrls: ["./driver-list.component.css"]
+  selector: 'app-driver-list',
+  templateUrl: './driver-list.component.html',
+  styleUrls: ['./driver-list.component.css']
 })
 export class DriverListComponent implements OnInit {
-  @ViewChild("map", null) mapElement: any;
+  @ViewChild('map', null) mapElement: any;
   map: google.maps.Map;
-  location: string = "Morgantown, WV";
+  location: string = 'Morgantown, WV';
   mapProperties: {};
   availableCars: Array<any> = [];
   drivers: Array<any> = [];
+  modalRef: BsModalRef;
 
   //  --------EXAMPLE CODE--------
   rows: Array<any> = [];
   columns: Array<any> = [
     {
-      title: "Name",
-      name: "name",
+      title: 'Name',
+      name: 'name',
     },
     {
-      title: "Distance",
-      name: "email",
-      filtering: { filterString: "", placeholder: "Filter by distance" }
+      title: 'Distance',
+      name: 'distance',
+      filtering: { filterString: '', placeholder: 'Filter by distance' }
     },
     {
-      title: "Time",
-      className: ["office-header", "text-success"],
-      name: "origin",
-      sort: "origin",
-      filtering: { filterString: "", placeholder: "Filter by time" }
+      title: 'Time',
+      className: ['office-header', 'text-success'],
+      name: 'duration',
+      sort: 'duration'
+      // filtering: { filterString: '', placeholder: 'Filter by time' }
     },
     {
-      title: "View Info.",
-      name: "phone",
-      sort: "",
+      title: 'Total Seats',
+      name: 'totalSeats',
+      sort: '',
+    },
+    {
+      title: 'Available Seats',
+      name: 'avSeats',
+      sort: '',
     }
   ];
   public page: number = 1;
@@ -60,43 +65,50 @@ export class DriverListComponent implements OnInit {
   config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    filtering: { filterString: "" },
-    className: ["table-striped", "table-bordered"]
+    filtering: { filterString: '' },
+    className: ['table-striped', 'table-bordered']
   };
 
   private data: Array<any>;
+  chosenCell: any;
 
-  constructor(private http: HttpClient, private userService: UserService) {
+  constructor(private http: HttpClient, private userService: UserService, private carServ: CarService, private modalServ: BsModalService) {
   }
   //  --------END OF EXAMPLE CODE--------
-  
+
   ngOnInit(): void {
-    
+
     this.drivers = [];
     this.userService.getRidersForLocation1(this.location).subscribe(res => {
-      console.log(res);
       res.forEach(element => {
-        this.drivers.push({
-          id: element.userId,
-          name: element.firstName + " " + element.lastName,
-          origin: element.hCity + "," + element.hState,
-          email: element.email,
-          phone: element.phoneNumber
+        this.carServ.getCarByUserId2(element.userId).subscribe((data) => {
+          this.drivers.push({
+            id: element.userId,
+            name: element.firstName + ' ' + element.lastName,
+            origin: element.hCity + ',' + element.hState,
+            email: element.email,
+            phone: element.phoneNumber,
+            duration: '',
+            distance: '',
+            duration2: 0,
+            distance2: 0,
+            avSeats: data.availableSeats,
+            totalSeats: data.seats
+          });
+          this.data = this.drivers;
+          this.displayDriversList(this.location, this.data);
+          this.length = this.data.length;
+          this.onChangeTable(this.config);
         });
       });
-      console.log(this.drivers);
-      this.data = this.drivers;
-      this.length = this.data.length;
-      console.log(this.data);
-      this.onChangeTable(this.config);
     });
 
     this.getGoogleApi();
     this.sleep(2000).then(() => {
       this.mapProperties = {
         center: new google.maps.LatLng(
-          Number(sessionStorage.getItem("lat")),
-          Number(sessionStorage.getItem("lng"))
+          Number(sessionStorage.getItem('lat')),
+          Number(sessionStorage.getItem('lng'))
         ),
         zoom: 15,
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -106,7 +118,6 @@ export class DriverListComponent implements OnInit {
         this.mapProperties
       );
       // get all routes
-      this.displayDriversList(this.location, this.drivers);
       // show drivers on map
       this.showDriversOnMap(this.location, this.drivers);
     });
@@ -121,12 +132,11 @@ export class DriverListComponent implements OnInit {
 
   getGoogleApi() {
     this.http.get(`${environment.loginUri}getGoogleApi`).subscribe(response => {
-      // console.log(response);
-      if (response["googleMapAPIKey"] != undefined) {
+      if (response['googleMapAPIKey'] != undefined) {
         new Promise(resolve => {
-          let script: HTMLScriptElement = document.createElement("script");
-          script.addEventListener("load", r => resolve());
-          script.src = `http://maps.googleapis.com/maps/api/js?key=${response["googleMapAPIKey"][0]}`;
+          let script: HTMLScriptElement = document.createElement('script');
+          script.addEventListener('load', r => resolve());
+          script.src = `http://maps.googleapis.com/maps/api/js?key=${response['googleMapAPIKey'][0]}`;
           document.head.appendChild(script);
         });
       }
@@ -154,14 +164,14 @@ export class DriverListComponent implements OnInit {
       {
         origin: origin,
         destination: destination,
-        travelMode: "DRIVING"
+        travelMode: 'DRIVING'
         // avoidTolls: true
       },
       function (response, status) {
-        if (status === "OK") {
+        if (status === 'OK') {
           display.setDirections(response);
         } else {
-          alert("Could not display directions due to: " + status);
+          alert('Could not display directions due to: ' + status);
         }
       }
     );
@@ -170,10 +180,8 @@ export class DriverListComponent implements OnInit {
     let origins = [];
     // set origin
     origins.push(origin);
-
-    var outputDiv = document.getElementById("output");
     drivers.forEach(element => {
-      var service = new google.maps.DistanceMatrixService();
+      const service = new google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
         {
           origins: origins,
@@ -183,49 +191,18 @@ export class DriverListComponent implements OnInit {
           avoidHighways: false,
           avoidTolls: false
         },
-         function (response, status) {
-          if (status !== "OK") {
-            alert("Error was: " + status);
+        (response, status) => {
+          if (status !== 'OK') {
+            alert('Error was: ' + status);
           } else {
-            var originList = response.originAddresses;
-            var destinationList = response.destinationAddresses;
-            var results = response.rows[0].elements;
-            // console.log(results[0].distance.text);
-            var name = element.name;
-            /* outputDiv.innerHTML += `<tr><td class="col">${name}</td>
-                                    <td class="col">${results[0].distance.text}</td>
-                                    <td class="col">${results[0].duration.text}</td>
-                                    <td class="col">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCentered${element.id}"> View</button>
-                                      <div class="col-lg-5">
-                                       <div class="modal" id="exampleModalCentered${element.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalCenteredLabel">Contact Info:</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                       <span aria-hidden="true">×</span>
-                                                     </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <h1>${name}</h1>
-                                                    <h3>Email: ${element.email}</h3>
-                                                    <h3>Phone: ${element.phone}</h3>
-                                                </div>
-                                                <div class="modal-footer">
-                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                </div>
-                                              </div>
-                                           </div>
-                                         </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div #maps id="gmap" class="img-responsive"></div>
-                                    </div>
-                                  </td></tr>`; */
+            const results = response.rows[0].elements;
+            element.distance = results[0].distance.text;
+            element.duration = results[0].duration.text;
+            element.distance2 = results[0].distance.value;
+            element.duration2 = results[0].duration.value;
           }
         }
-      ); 
+      );
     });
   }
 
@@ -246,7 +223,7 @@ export class DriverListComponent implements OnInit {
     let sort: string = void 0;
 
     for (let i = 0; i < columns.length; i++) {
-      if (columns[i].sort !== "" && columns[i].sort !== false) {
+      if (columns[i].sort !== '' && columns[i].sort !== false) {
         columnName = columns[i].name;
         sort = columns[i].sort;
       }
@@ -259,9 +236,9 @@ export class DriverListComponent implements OnInit {
     // simple sorting
     return data.sort((previous: any, current: any) => {
       if (previous[columnName] > current[columnName]) {
-        return sort === "desc" ? -1 : 1;
+        return sort === 'desc' ? -1 : 1;
       } else if (previous[columnName] < current[columnName]) {
-        return sort === "asc" ? -1 : 1;
+        return sort === 'asc' ? -1 : 1;
       }
       return 0;
     });
@@ -269,10 +246,8 @@ export class DriverListComponent implements OnInit {
 
   changeFilter(data: any, config: any): any {
     let filteredData: Array<any> = data;
-    console.log(data);
     this.columns.forEach((column: any) => {
       if (column.filtering) {
-        console.log(column.filtering);
         filteredData = filteredData.filter((item: any) => {
           return item[column.name].match(column.filtering.filterString);
         });
@@ -329,7 +304,9 @@ export class DriverListComponent implements OnInit {
     this.length = sortedData.length;
   }
 
-  public onCellClick(data: any): any {
-    console.log(data);
+  public onCellClick(data: any, template: TemplateRef<any>): any {
+    this.chosenCell = data.row;
+    this.modalRef = this.modalServ.show(template);
   }
+
 }
