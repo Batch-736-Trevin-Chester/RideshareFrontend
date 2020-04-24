@@ -29,7 +29,7 @@
       </div>
 
       <!-- Modal Content -->
-      <div class="content" (keydown)="submitOnEnter($event)">
+      <div class="content">
 
         <!-- "User Not Found" Error -->
         <div class="form-group">
@@ -40,7 +40,7 @@
         <div class="form-group">
           <label for="formGroupExampleInput">Username</label><br>
           <input type="text" [(ngModel)]="userName" class="form-control" id="formGroupExampleInput"
-            placeholder="Enter Username">
+            placeholder="Enter Username" (keydown)="submitOnEnter($event)">
           <p class="error">{{usernameError}}</p>
         </div>
 
@@ -48,17 +48,36 @@
         <div class="form-group">
           <label for="formGroupExampleInput2">Password</label><br>
           <input type="password" [(ngModel)]="passWord" class="form-control" id="formGroupExampleInput2"
-            placeholder="Enter Password">
+            placeholder="Enter Password" (keydown)="submitOnEnter($event)">
           <p class="error">{{pwdError}}</p>
         </div>
         
+        <!-- Admin Checkbox -->
+        <div class="form-group">
+          <input type="checkbox" [(ngModel)]="adminCheck">
+          <label style="font-size: 16px;" (click)="clickAdminCheck()">Login as Admin</label>
+        </div>
+
+        <div class="form-group" *ngIf="displayVerificationField">
+          <p id="reset" style="color:blue" (click)="resetLogin()">Back to regular login</p>        
+          <p>A verification code has been sent to this administrator's email address.</p>
+          <label for="formGroupExampleInput">Verification Code</label><br>
+          <input type="text" [(ngModel)]="adminLoginObject.verificationCode" class="form-control"
+            placeholder="Enter verification code" (keydown)="submitVerificationOnEnter($event)">
+          <p class="error">{{verificationCodeError}}</p>
+        </div>
+
+
         <!-- UserBan Alerts -->
         
         <p class="alert alert-danger" *ngIf="banned"><strong>You are banned</strong></p>
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" id="sign-in-btn" (click)="login()">Login</button>        
+        <!-- Submit Button (displayed by default)-->
+        <button *ngIf="!displayVerificationField" type="submit" class="btn btn-primary" id="sign-in-btn" (click)="login()">Login</button>
+        <!-- Submit Verification Button (displayed after attempted admin login)-->
+        <button *ngIf="displayVerificationField" type="submit" class="btn btn-primary" id="sign-in-btn" (click)="submitVerificationCode()">Submit</button>
         <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
+
       </div>
     </div>
   </div>
