@@ -27,9 +27,19 @@
                         <button type="button" class="btn btn-outline-danger mybtngroup">Off</button>
                     </div> -->
 
-                <p *ngIf="success != ''" class="success">{{success}}</p>
-                <button type="submit" class="btn btn-primary myBtn" (click)="updatesMembershipInfo()">Save</button>
+                <!-- <p *ngIf="success != ''" class="success">{{success}}</p>
+                <button type="submit" class="btn btn-primary myBtn" (click)="updatesMembershipInfo()">Save</button> -->
+                <button type="submit" class="btn btn-warning myBtn" (click)="showPopup()">Disable Account</button>
                 </div>
+
+                <div id="disable_popup_wrapper">
+                    <div class="modal-content">
+                        <h3>Are you sure you want to disable your account?</h3>
+                        <button class="btn btn-primary myBtn" (click)="logout()">Yes</button>
+                        <button class="btn btn-warning myBtn" (click)="hidePopup()">Cancel</button>
+                    </div>
+                </div>
+
                 <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
             </div>
         </div>

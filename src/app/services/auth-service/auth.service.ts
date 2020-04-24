@@ -65,6 +65,19 @@ export class AuthService {
 		}
 	}
 
+	logout() {
+		this.user = {};
+		this.admin = new Admin();
+		//clear all session
+		// this.name = '';
+		// this.admin = '';
+		// this.currentUser = '';
+		sessionStorage.removeItem("name");
+		sessionStorage.removeItem("userid");
+		//sessionStorage.clear(); 
+		this.router.navigate(['']);
+	  }
+
 	getEmitter() {
 		return this.fireIsLoggedIn;
 	}
