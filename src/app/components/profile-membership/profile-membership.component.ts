@@ -1,6 +1,11 @@
+import { Router } from '@angular/router';
+import { AuthService } from './../../services/auth-service/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user-service/user.service';
 import { User } from 'src/app/models/user';
+import { Admin } from 'src/app/models/admin';
+
+
 @Component({
   selector: 'app-profile-membership',
   templateUrl: './profile-membership.component.html',
@@ -16,7 +21,7 @@ export class ProfileMembershipComponent implements OnInit {
   currentUser: any = '';
   success: string;
   httpResponseError: string;
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,private authService: AuthService, private router: Router) { }
 
   /*
   *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:20 am
@@ -32,6 +37,30 @@ export class ProfileMembershipComponent implements OnInit {
         this.httpResponseError = 'Server not found. Try again later.';
       });
   }
+
+
+
+  // Show popup
+  showPopup() {
+    document.getElementById("disable_popup_wrapper").style.display = "block";
+  }
+
+  hidePopup() {
+    document.getElementById("disable_popup_wrapper").style.display = "none";
+  }
+
+  logout() {
+    // this.authService.user = {};
+    // this.authService.admin = new Admin();
+    //clear all session
+    this.currentUser = '';
+    sessionStorage.removeItem("name");
+    sessionStorage.removeItem("userid");
+    //sessionStorage.clear(); 
+    this.router.navigate(['']);
+  }
+
+
 
   /*
   *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:21 am

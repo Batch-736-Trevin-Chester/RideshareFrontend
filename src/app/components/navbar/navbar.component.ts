@@ -69,6 +69,7 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+
    /**
    * Function that takes no parameters. 
    * It will clear the sesssion storage.
