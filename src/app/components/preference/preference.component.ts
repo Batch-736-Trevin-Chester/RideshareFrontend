@@ -67,10 +67,10 @@ export class PreferenceComponent implements OnInit {
 
   toggleActive() {
     if (this.user.active) {
-      let text = prompt("Your Account Will Be Banned. Type 'Confirm' To Continued");
+      let text = prompt("Your Account Will Be Deactivated and Logged Out. Type 'Confirm' To Continue");
       if (text === 'Confirm') {
         this.user.active = !this.user.active;
-        this.user.isAcceptingRides = false;
+        this.user.acceptingRides = false;
         this.userService.updatePreference('active', this.user.active, this.user.userId);
       }
     } else {
@@ -85,7 +85,7 @@ export class PreferenceComponent implements OnInit {
    */
 
   toggleAcceptRider() {
-    this.user.isAcceptingRides = !this.user.isAcceptingRides;
-    this.userService.updatePreference('acceptingRides', this.user.isAcceptingRides, this.user.userId);
+    this.user.acceptingRides = !this.user.acceptingRides;
+    this.userService.updatePreference('acceptingRides', this.user.acceptingRides, this.user.userId);
   }
 }

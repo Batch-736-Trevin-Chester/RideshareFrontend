@@ -122,6 +122,7 @@ export class SignupModalComponent implements OnInit {
         this.user.wCity = this.user.hCity;
         this.user.wZip = this.user.hZip;
         this.setIsDriver();
+        this.user.active = true;
 
         // NEW CODE: Validating user fields before submission
         const fieldsValidated = this.validateFieldsComplete();
@@ -202,6 +203,7 @@ export class SignupModalComponent implements OnInit {
                         addVal = false;
                     }
                     if (addVal && stateVal && zipVal && cityVal) {
+                        console.log(this.user);
                         this.userService.addUser(this.user).subscribe(
                             res => {
                                 console.log(res);
@@ -253,10 +255,10 @@ export class SignupModalComponent implements OnInit {
         const rider = document.getElementById('rider') as HTMLInputElement;
 
         if (driver.checked == true) {
-            this.user.isDriver = true;
+            this.user.driver = true;
         }
         if (rider.checked == true) {
-            this.user.isDriver = false;
+            this.user.driver = false;
         }
     }
 
