@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 import { UserService } from 'src/app/services/user-service/user.service';
 import { AuthService } from 'src/app/services/auth-service/auth.service';
 import { User } from 'src/app/models/user';
@@ -17,7 +17,7 @@ import {SignupModalComponent} from '../sign-up-modal/sign-up-modal.component';
    */
 
 export class NavbarComponent implements OnInit {
-  modal :SignupModalComponent;
+  modal: SignupModalComponent;
   /**
    * This is a name string.
    */
@@ -34,7 +34,17 @@ export class NavbarComponent implements OnInit {
    * @param authService A dependency of an auth service is injected.
    */
 
-  constructor(private router: Router, private userService: UserService, public authService: AuthService) { }
+  constructor(private router: Router, private userService: UserService, public authService: AuthService) {
+    router.events.forEach((event) => {
+      if (event instanceof NavigationStart) {
+      }
+      if (sessionStorage.getItem('userid') != null) {
+        this.currentUser = sessionStorage.getItem('name');
+      } else {
+        this.currentUser = '';
+      }
+    });
+   }
 
   /**
    * This is an OnInit function that sets the token to the parsed token string.
@@ -45,15 +55,15 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
 
-    if(sessionStorage.getItem("userid") != null){
-      this.currentUser =sessionStorage.getItem("name");
-    }else{
-      this.currentUser ='';
+    if (sessionStorage.getItem('userid') != null) {
+      this.currentUser = sessionStorage.getItem('name');
+    } else {
+      this.currentUser = '';
     }
     if (this.authService.user.userId) {
-      this.userService.getUserById(this.authService.user.userId).then((response)=>{
+      this.userService.getUserById(this.authService.user.userId).then((response) => {
         this.name = response.firstName;
-      })
+      });
     }
 
     this.authService.getEmitter().subscribe((user: any) => {
@@ -71,23 +81,23 @@ export class NavbarComponent implements OnInit {
 
 
    /**
-   * Function that takes no parameters. 
+   * Function that takes no parameters.
    * It will clear the sesssion storage.
-   * @return {void} 
-   * 
+   * @return {void}
+   *
    */
 
-   
+
   logout() {
     this.authService.user = {};
     this.authService.admin = new Admin();
-    //clear all session
+    // clear all session
     this.name = '';
     this.admin = '';
     this.currentUser = '';
-    sessionStorage.removeItem("name");
-    sessionStorage.removeItem("userid");
-    //sessionStorage.clear(); 
+    sessionStorage.removeItem('name');
+    sessionStorage.removeItem('userid');
+    // sessionStorage.clear();
     this.router.navigate(['']);
   }
 

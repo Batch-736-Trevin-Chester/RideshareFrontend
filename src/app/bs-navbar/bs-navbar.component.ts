@@ -36,9 +36,9 @@ export class BsNavbarComponent implements OnInit {
 
   ngOnInit() {
     if (this.authService.user.userId) {
-      this.userService.getUserById(this.authService.user.userId).then((response)=>{
+      this.userService.getUserById(this.authService.user.userId).then((response) => {
         this.name = response.firstName;
-      })
+      });
     }
 
     this.authService.getEmitter().subscribe((user: any) => {
@@ -52,16 +52,20 @@ export class BsNavbarComponent implements OnInit {
     this.userService.getEmitter().subscribe((user: User) => {
       this.name = user.firstName;
     });
+
+    this.authService.getEmitterLogOut().subscribe((user: User) => {
+      this.name = user.firstName;
+    });
   }
 
    /**
-   * Function that takes no parameters. 
+   * Function that takes no parameters.
    * It will clear the sesssion storage.
-   * @return {void} 
-   * 
+   * @return {void}
+   *
    */
 
-   
+
   logout() {
     this.authService.user = {};
     this.name = '';

@@ -1,9 +1,8 @@
 import { Router } from '@angular/router';
 import { AuthService } from './../../services/auth-service/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UserService } from 'src/app/services/user-service/user.service';
 import { User } from 'src/app/models/user';
-import { Admin } from 'src/app/models/admin';
 
 
 @Component({
@@ -21,6 +20,7 @@ export class ProfileMembershipComponent implements OnInit {
   currentUser: any = '';
   success: string;
   httpResponseError: string;
+  
   constructor(private userService: UserService,private authService: AuthService, private router: Router) { }
 
   /*

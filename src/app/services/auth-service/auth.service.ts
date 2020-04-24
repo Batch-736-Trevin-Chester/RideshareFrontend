@@ -14,6 +14,9 @@ export class AuthService {
 
 
 	@Output() fireIsLoggedIn: EventEmitter<any> = new EventEmitter<any>();
+
+	@Output() fireIsLoggedout: EventEmitter<any> = new EventEmitter<any>();
+
 	 loggedIn: boolean = false;
 
 
@@ -77,6 +80,10 @@ export class AuthService {
 		//sessionStorage.clear(); 
 		this.router.navigate(['']);
 	  }
+
+	getEmitterLogOut() {
+		return this.fireIsLoggedout;
+	}
 
 	getEmitter() {
 		return this.fireIsLoggedIn;
