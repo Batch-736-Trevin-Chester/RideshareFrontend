@@ -32,10 +32,10 @@ export class AdminService {
     );
   }
 
-  adminVerificationSubmission(adminLoginObject): Observable<Admin> {
+  adminVerificationSubmission(OTP): Observable<any> {
     return this.http.post<Admin>(
-      this.url,
-      adminLoginObject,
+      this.url + OTP,
+      {},
       this.httpOptions
     );
   }

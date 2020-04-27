@@ -1,11 +1,11 @@
 <div class="container">
     <form class="text-center" id="login-form">
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="admins">Admin Account: </label>
             <select (change)="changeAdmin($event)" id="admins">
                 <option *ngFor="let admin of admins" value="admin.adminId">{{admin.adminId}}</option>
             </select>
-        </div>
+        </div> -->
         <div class="form-group">
             <label for="userName">User Name:</label><br>
             <input type="text" id="userName" [(ngModel)]="userName" name="userName" placeholder="Admin User Name" autocomplete="off"/><br>
@@ -15,4 +15,45 @@
         <br><br>
         <p><a routerLink="">Sign In</a> As User</p>
     </form>
+    <p class="error">{{pleaseWaitMsg}}</p>
+    <button id="openModalButton" [hidden]="true" (click)='openModal(templateOTP)'>Open Modal</button>
 </div>
+
+<ng-template #templateOTP id='templateOTP'>
+    <div class="container">
+      <div class="text-center" id="login-form">
+        
+        <!-- Modal Title -->
+        <div class="modal-title-container">
+          <h4 class="modal-title">Enter Admin OTP</h4>
+        </div>
+  
+        <!-- Modal Content -->
+        <div class="content">
+  
+          <!-- "User Not Found" Error -->
+          <div class="form-group">
+            <p class="error">{{OTPincorrectError}}</p>
+          </div>
+  
+          <!-- OTP Input -->
+          <div class="form-group">
+            <label for="formGroupExampleInput2">OTP</label><br>
+            <input type="password" [(ngModel)]="OTPsubmitted" class="form-control" id="formGroupExampleInput2"
+              placeholder="Enter OTP" (keydown)="submitVerificationOnEnter($event)">
+            <p class="error">{{OTPError}}</p>
+          </div>
+  
+          <!-- UserBan Alerts -->
+          
+          <p class="alert alert-danger" *ngIf="banned"><strong>You are banned</strong></p>
+  
+          <!-- Submit Button (displayed by default)-->
+          
+          <button type="submit" class="btn btn-primary" id="sign-in-btn" (click)="submitVerificationCode()">Submit</button>
+          <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
+  
+        </div>
+      </div>
+    </div>
+  </ng-template>
