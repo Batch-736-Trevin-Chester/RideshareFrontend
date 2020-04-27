@@ -25,6 +25,7 @@ export class DriverListComponent implements OnInit {
   availableCars: Array<any> = [];
   drivers: Array<any> = [];
   modalRef: BsModalRef;
+  miToM = 1609.34375;
 
   //  --------EXAMPLE CODE--------
   rows: Array<any> = [];
@@ -36,13 +37,14 @@ export class DriverListComponent implements OnInit {
     {
       title: 'Distance',
       name: 'distance',
-      filtering: { filterString: '', placeholder: 'Filter by distance' }
+      sort: 'distance'
+      // filtering: { filterString: '', placeholder: 'Filter by distance' }
     },
     {
       title: 'Time',
-      className: ['office-header', 'text-success'],
+      // className: ['office-header', 'text-success'],
       name: 'duration',
-      sort: 'duration'
+      sort: 'duration2'
       // filtering: { filterString: '', placeholder: 'Filter by time' }
     },
     {
@@ -69,6 +71,7 @@ export class DriverListComponent implements OnInit {
     className: ['table-striped', 'table-bordered']
   };
 
+  private totalList: Array<any>;
   private data: Array<any>;
   chosenCell: any;
 
@@ -95,10 +98,10 @@ export class DriverListComponent implements OnInit {
             avSeats: data.availableSeats,
             totalSeats: data.seats
           });
-          this.data = this.drivers;
-          this.displayDriversList(this.location, this.data);
+          this.filter(-1, 5 * this.miToM );
+          /* this.displayDriversList(this.location, this.data);
           this.length = this.data.length;
-          this.onChangeTable(this.config);
+          this.onChangeTable(this.config); */
         });
       });
     });
@@ -176,6 +179,7 @@ export class DriverListComponent implements OnInit {
       }
     );
   }
+
   displayDriversList(origin, drivers) {
     let origins = [];
     // set origin
@@ -309,4 +313,26 @@ export class DriverListComponent implements OnInit {
     this.modalRef = this.modalServ.show(template);
   }
 
+  filter(min: number, max: number) {
+    this.data = [];
+    if (min > max && max != -1) {
+      return;
+    }
+
+    this.drivers.forEach(driver => {
+      let dInM = driver.distance2;
+      console.log(dInM+ ' ' + max);
+      if (dInM >= min) {
+        if (max == -1) {
+          this.data.push(driver);
+        } else if ( dInM <= max) {
+          this.data.push(driver);
+        }
+      }
+    });
+
+    this.displayDriversList(this.location, this.data);
+    this.length = this.data.length;
+    this.onChangeTable(this.config);
+  }
 }

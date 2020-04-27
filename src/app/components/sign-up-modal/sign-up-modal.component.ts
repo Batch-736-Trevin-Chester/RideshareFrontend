@@ -232,10 +232,10 @@ export class SignupModalComponent implements OnInit {
         const rider = document.getElementById('rider') as HTMLInputElement;
 
         if (driver.checked == true) {
-            this.user.isDriver = true;
+            this.user.driver = true;
         }
         if (rider.checked == true) {
-            this.user.isDriver = false;
+            this.user.driver = false;
         }
     }
 

@@ -1,3 +1,27 @@
+<div class="select_group">
+  <label for = "min">Min: </label>
+  <select #min id="min">
+    <option value="-1">No min</option>
+    <option value="{{5*miToM}}">5 mi</option>
+    <option value="{{10*miToM}}">10 mi</option>
+    <option value="{{20*miToM}}">20 mi</option>
+    <option value="{{50*miToM}}">50 mi</option>
+    <option value="{{100*miToM}}">100 mi</option>
+  </select>
+  <span> to </span>
+  <label for = "max">Max: </label>
+  <select #max id="max">
+    <option value="{{5*miToM}}">5 mi</option>
+    <option value="{{10*miToM}}">10 mi</option>
+    <option value="{{20*miToM}}">20 mi</option>
+    <option value="{{50*miToM}}">50 mi</option>
+    <option value="{{100*miToM}}">100 mi</option>
+    <option value="-1">No max</option>
+  </select>
+
+  <button type="button" (click) = "filter(min.value, max.value)">Filter</button>
+</div>
+
 <div class="container-fluid mt-5">
   <div *ngIf="data" class="row">
     <div class="col-lg-8">
