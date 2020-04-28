@@ -4,7 +4,7 @@ import { UserService } from 'src/app/services/user-service/user.service';
 import { AuthService } from 'src/app/services/auth-service/auth.service';
 import { User } from 'src/app/models/user';
 import { Admin } from 'src/app/models/admin';
-import {SignupModalComponent} from '../sign-up-modal/sign-up-modal.component';
+import { SignupModalComponent } from '../sign-up-modal/sign-up-modal.component';
 
 @Component({
   selector: 'app-navbar',
@@ -12,12 +12,12 @@ import {SignupModalComponent} from '../sign-up-modal/sign-up-modal.component';
   styleUrls: ['./navbar.component.css']
 })
 
-  /**
-   * The Navbar component
-   */
+/**
+ * The Navbar component
+ */
 
 export class NavbarComponent implements OnInit {
-  modal :SignupModalComponent;
+  modal: SignupModalComponent;
   /**
    * This is a name string.
    */
@@ -45,15 +45,15 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
 
-    if(sessionStorage.getItem("userid") != null){
-      this.currentUser =sessionStorage.getItem("name");
-    }else{
-      this.currentUser ='';
+    if (sessionStorage.getItem('userid') != null) {
+      this.currentUser = sessionStorage.getItem('name');
+    } else {
+      this.currentUser = '';
     }
     if (this.authService.user.userId) {
-      this.userService.getUserById(this.authService.user.userId).then((response)=>{
+      this.userService.getUserById(this.authService.user.userId).then((response) => {
         this.name = response.firstName;
-      })
+      });
     }
 
     this.authService.getEmitter().subscribe((user: any) => {
@@ -69,24 +69,24 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-   /**
-   * Function that takes no parameters. 
-   * It will clear the sesssion storage.
-   * @return {void} 
-   * 
-   */
+  /**
+  * Function that takes no parameters.
+  * It will clear the sesssion storage.
+  * @return {void}
+  *
+  */
 
-   
+
   logout() {
     this.authService.user = {};
     this.authService.admin = new Admin();
-    //clear all session
+    // clear all session
     this.name = '';
     this.admin = '';
     this.currentUser = '';
-    sessionStorage.removeItem("name");
-    sessionStorage.removeItem("userid");
-    //sessionStorage.clear(); 
+    sessionStorage.removeItem('name');
+    sessionStorage.removeItem('userid');
+    // sessionStorage.clear();
     this.router.navigate(['']);
   }
 
