@@ -36,16 +36,13 @@ export class DriverListComponent implements OnInit {
     },
     {
       title: 'Distance',
-      name: 'distance',
-      sort: 'distance'
-      // filtering: { filterString: '', placeholder: 'Filter by distance' }
+      name: 'distanceText',
+      sort: 'distanceValue'
     },
     {
       title: 'Time',
-      // className: ['office-header', 'text-success'],
-      name: 'duration',
-      sort: 'duration2'
-      // filtering: { filterString: '', placeholder: 'Filter by time' }
+      name: 'durationText',
+      sort: 'durationValue'
     },
     {
       title: 'Total Seats',
@@ -71,7 +68,6 @@ export class DriverListComponent implements OnInit {
     className: ['table-striped', 'table-bordered']
   };
 
-  private totalList: Array<any>;
   private data: Array<any>;
   chosenCell: any;
 
@@ -91,17 +87,29 @@ export class DriverListComponent implements OnInit {
             origin: element.hCity + ',' + element.hState,
             email: element.email,
             phone: element.phoneNumber,
-            duration: '',
-            distance: '',
-            duration2: 0,
-            distance2: 0,
+            durationText: '',
+            distanceText: '',
+            durationValue: 0,
+            distanceValue: 0,
             avSeats: data.availableSeats,
             totalSeats: data.seats
           });
           this.filter(-1, 5 * this.miToM );
-          /* this.displayDriversList(this.location, this.data);
-          this.length = this.data.length;
-          this.onChangeTable(this.config); */
+          // tslint:disable-next-line: variable-name
+          const _this = this;
+          setTimeout( () => {
+
+            let count = 0;
+
+            _this.drivers.forEach(element2 => {
+              if (element2.distanceText != '') {
+                count++;
+              }
+            });
+            if (count == _this.length) {
+              _this.filter(-1, 5 * _this.miToM);
+            }
+          } , 500);
         });
       });
     });
@@ -136,8 +144,9 @@ export class DriverListComponent implements OnInit {
   getGoogleApi() {
     this.http.get(`${environment.loginUri}getGoogleApi`).subscribe(response => {
       if (response['googleMapAPIKey'] != undefined) {
+        // tslint:disable-next-line: no-unused-expression
         new Promise(resolve => {
-          let script: HTMLScriptElement = document.createElement('script');
+          const script: HTMLScriptElement = document.createElement('script');
           script.addEventListener('load', r => resolve());
           script.src = `http://maps.googleapis.com/maps/api/js?key=${response['googleMapAPIKey'][0]}`;
           document.head.appendChild(script);
@@ -148,8 +157,8 @@ export class DriverListComponent implements OnInit {
 
   showDriversOnMap(origin, drivers) {
     drivers.forEach(element => {
-      var directionsService = new google.maps.DirectionsService();
-      var directionsRenderer = new google.maps.DirectionsRenderer({
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer({
         draggable: true,
         map: this.map
       });
@@ -165,12 +174,14 @@ export class DriverListComponent implements OnInit {
   displayRoute(origin, destination, service, display) {
     service.route(
       {
+        // tslint:disable-next-line: object-literal-shorthand
         origin: origin,
+        // tslint:disable-next-line: object-literal-shorthand
         destination: destination,
         travelMode: 'DRIVING'
         // avoidTolls: true
       },
-      function (response, status) {
+      (response, status) => {
         if (status === 'OK') {
           display.setDirections(response);
         } else {
@@ -181,6 +192,7 @@ export class DriverListComponent implements OnInit {
   }
 
   displayDriversList(origin, drivers) {
+    // tslint:disable-next-line: prefer-const
     let origins = [];
     // set origin
     origins.push(origin);
@@ -188,6 +200,7 @@ export class DriverListComponent implements OnInit {
       const service = new google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
         {
+          // tslint:disable-next-line: object-literal-shorthand
           origins: origins,
           destinations: [element.origin],
           travelMode: google.maps.TravelMode.DRIVING,
@@ -200,10 +213,10 @@ export class DriverListComponent implements OnInit {
             alert('Error was: ' + status);
           } else {
             const results = response.rows[0].elements;
-            element.distance = results[0].distance.text;
-            element.duration = results[0].duration.text;
-            element.distance2 = results[0].distance.value;
-            element.duration2 = results[0].duration.value;
+            element.distanceText = results[0].distance.text;
+            element.durationText = results[0].duration.text;
+            element.distanceValue = results[0].distance.value;
+            element.durationValue = results[0].duration.value;
           }
         }
       );
@@ -212,8 +225,8 @@ export class DriverListComponent implements OnInit {
 
   // --------------EXAMPLE SORT, FILTER AND PAGINATION FUNCTIONS BELOW--------------
   changePage(page: any, data: Array<any> = this.data): Array<any> {
-    let start = (page.page - 1) * page.itemsPerPage;
-    let end = page.itemsPerPage > -1 ? start + page.itemsPerPage : data.length;
+    const start = (page.page - 1) * page.itemsPerPage;
+    const end = page.itemsPerPage > -1 ? start + page.itemsPerPage : data.length;
     return data.slice(start, end);
   }
 
@@ -222,10 +235,11 @@ export class DriverListComponent implements OnInit {
       return data;
     }
 
-    let columns = this.config.sorting.columns || [];
+    const columns = this.config.sorting.columns || [];
     let columnName: string = void 0;
     let sort: string = void 0;
 
+    // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < columns.length; i++) {
       if (columns[i].sort !== '' && columns[i].sort !== false) {
         columnName = columns[i].name;
@@ -239,6 +253,11 @@ export class DriverListComponent implements OnInit {
 
     // simple sorting
     return data.sort((previous: any, current: any) => {
+      if (columnName == 'distanceText') {
+        columnName = 'distanceValue';
+      } else if (columnName == 'durationText') {
+        columnName = 'durationValue';
+      }
       if (previous[columnName] > current[columnName]) {
         return sort === 'desc' ? -1 : 1;
       } else if (previous[columnName] < current[columnName]) {
@@ -270,7 +289,7 @@ export class DriverListComponent implements OnInit {
       );
     }
 
-    let tempArray: Array<any> = [];
+    const tempArray: Array<any> = [];
     filteredData.forEach((item: any) => {
       let flag = false;
       this.columns.forEach((column: any) => {
@@ -301,8 +320,8 @@ export class DriverListComponent implements OnInit {
       Object.assign(this.config.sorting, config.sorting);
     }
 
-    let filteredData = this.changeFilter(this.data, this.config);
-    let sortedData = this.changeSort(filteredData, this.config);
+    const filteredData = this.changeFilter(this.data, this.config);
+    const sortedData = this.changeSort(filteredData, this.config);
     this.rows =
       page && config.paging ? this.changePage(page, sortedData) : sortedData;
     this.length = sortedData.length;
@@ -320,8 +339,7 @@ export class DriverListComponent implements OnInit {
     }
 
     this.drivers.forEach(driver => {
-      let dInM = driver.distance2;
-      console.log(dInM+ ' ' + max);
+      const dInM = driver.distanceValue;
       if (dInM >= min) {
         if (max == -1) {
           this.data.push(driver);
