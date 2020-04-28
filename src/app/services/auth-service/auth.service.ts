@@ -47,7 +47,7 @@ export class AuthService {
 			else{
 				this.router.navigate(['/home/drivers']);
 			}
-			
+
 			this.fireIsLoggedIn.emit(this.user);
 		} else {
 			return false;

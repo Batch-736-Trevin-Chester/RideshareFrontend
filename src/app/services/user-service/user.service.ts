@@ -168,9 +168,9 @@ export class UserService {
 					this.user.acceptingRides = false;
 				}
 
-				this.http.put(this.url + userId, this.user).subscribe(
-					(response) => {
-						this.authService.user = response;
+				this.http.put(this.url, this.user).subscribe(
+					(data) => {
+						this.authService.user = data;
 					},
 					(error) => console.warn(error)
 				);

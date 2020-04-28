@@ -17,10 +17,10 @@
                         <option value=true>Driver</option>
                         <option value=false>Rider</option>
                     </select>
-                    <select class="form-control mySelect" name="active" id="active" [(ngModel)]="profileObject.active"> <!-- value="{{profileObject.active}}" -->
+                    <!-- <select class="form-control mySelect" name="active" id="active" [(ngModel)]="profileObject.active">
                         <option value=true>Active</option>
                         <option value=false>Disabled</option>
-                    </select>
+                    </select> -->
                     <!-- <div class="btn-group" role="group" aria-label="Basic example">
                         <button type="button" class="btn btn-outline-success mybtngroup">Rider</button>
                         <button type="button" class="btn btn-outline-success mybtngroup">Driver</button>
@@ -34,8 +34,8 @@
 
                 <div id="disable_popup_wrapper">
                     <div class="modal-content">
-                        <h3>Are you sure you want to disable your account?</h3>
-                        <button class="btn btn-primary myBtn" (click)="logout()">Yes</button>
+                        <h3>Are you sure you want to disable your account? (You will be logged out.)</h3>
+                        <button class="btn btn-primary myBtn" (click)="toggleActive()">Yes</button>
                         <button class="btn btn-warning myBtn" (click)="hidePopup()">Cancel</button>
                     </div>
                 </div>

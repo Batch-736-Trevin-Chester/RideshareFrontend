@@ -51,17 +51,23 @@ export class ProfileMembershipComponent implements OnInit {
   }
 
   logout() {
-    // this.authService.user = {};
-    // this.authService.admin = new Admin();
-    //clear all session
     this.currentUser = '';
     sessionStorage.removeItem("name");
     sessionStorage.removeItem("userid");
-    //sessionStorage.clear(); 
     this.router.navigate(['']);
   }
 
-
+  toggleActive() {
+    if (this.profileObject.active) {
+        this.profileObject.active = !this.profileObject.active;
+        this.profileObject.acceptingRides = false;
+        this.userService.updatePreference('active', this.profileObject.active, this.profileObject.userId);
+        this.logout();
+    } else {
+      this.profileObject.active = !this.profileObject.active;
+      this.userService.updatePreference('active', this.profileObject.active, this.profileObject.userId);
+    }
+  }
 
   /*
   *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:21 am

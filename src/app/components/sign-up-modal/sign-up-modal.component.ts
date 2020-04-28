@@ -203,10 +203,8 @@ export class SignupModalComponent implements OnInit {
                         addVal = false;
                     }
                     if (addVal && stateVal && zipVal && cityVal) {
-                        console.log(this.user);
                         this.userService.addUser(this.user).subscribe(
                             res => {
-                                console.log(res);
                                 if (i === 0) {
                                     i = 0;
                                     this.success = 'Registered successfully!';
