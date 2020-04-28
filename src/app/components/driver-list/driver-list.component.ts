@@ -32,7 +32,7 @@ export class DriverListComponent implements OnInit {
   columns: Array<any> = [
     {
       title: 'Name',
-      name: 'name',
+      name: 'name'
     },
     {
       title: 'Distance',
@@ -47,12 +47,17 @@ export class DriverListComponent implements OnInit {
     {
       title: 'Total Seats',
       name: 'totalSeats',
-      sort: '',
+      sort: ''
     },
     {
       title: 'Available Seats',
       name: 'avSeats',
-      sort: '',
+      sort: ''
+    },
+    {
+      title: 'Recommended',
+      name: 'recommended',
+      sort: ''
     }
   ];
   public page: number = 1;
@@ -92,7 +97,8 @@ export class DriverListComponent implements OnInit {
             durationValue: 0,
             distanceValue: 0,
             avSeats: data.availableSeats,
-            totalSeats: data.seats
+            totalSeats: data.seats,
+            recommended: 'No'
           });
           this.filter(-1, 5 * this.miToM );
           // tslint:disable-next-line: variable-name
@@ -108,6 +114,7 @@ export class DriverListComponent implements OnInit {
             });
             if (count == _this.length) {
               _this.filter(-1, 5 * _this.miToM);
+              this.filterRecommended(0, 10 * _this.miToM);
             }
           } , 500);
         });
@@ -345,6 +352,31 @@ export class DriverListComponent implements OnInit {
           this.data.push(driver);
         } else if ( dInM <= max) {
           this.data.push(driver);
+        }
+      }
+    });
+
+    this.displayDriversList(this.location, this.data);
+    this.length = this.data.length;
+    this.onChangeTable(this.config);
+  }
+
+  filterRecommended(min: number, max: number) {
+    this.data = [];
+    if (min > max && max != -1) {
+      return;
+    }
+
+    this.drivers.forEach(driver => {
+      const dInM = driver.distanceValue;
+      if (dInM >= min) {
+        if (max == -1) {
+          this.data.push(driver);
+        } else if ( dInM <= max) {
+          this.data.push(driver);
+          if (driver.avSeats > 0) {
+            driver.recommended = 'Yes';
+          }
         }
       }
     });
