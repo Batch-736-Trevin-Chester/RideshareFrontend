@@ -4,7 +4,7 @@ import { UserService } from 'src/app/services/user-service/user.service';
 import { AuthService } from 'src/app/services/auth-service/auth.service';
 import { User } from 'src/app/models/user';
 import { Admin } from 'src/app/models/admin';
-import {SignupModalComponent} from '../sign-up-modal/sign-up-modal.component';
+import { SignupModalComponent } from '../sign-up-modal/sign-up-modal.component';
 
 @Component({
   selector: 'app-navbar',
@@ -12,9 +12,9 @@ import {SignupModalComponent} from '../sign-up-modal/sign-up-modal.component';
   styleUrls: ['./navbar.component.css']
 })
 
-  /**
-   * The Navbar component
-   */
+/**
+ * The Navbar component
+ */
 
 export class NavbarComponent implements OnInit {
   modal: SignupModalComponent;
@@ -79,13 +79,12 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-
-   /**
-   * Function that takes no parameters.
-   * It will clear the sesssion storage.
-   * @return {void}
-   *
-   */
+  /**
+  * Function that takes no parameters.
+  * It will clear the sesssion storage.
+  * @return {void}
+  *
+  */
 
 
   logout() {

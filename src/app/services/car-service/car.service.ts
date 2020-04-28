@@ -41,7 +41,7 @@ export class CarService {
 
 	/**
 	 * This function returns an car by user ID.
-	 * @param userId 
+	 * @param userId
 	 */
 
 	getCarByUserId(userId: number) {
@@ -60,8 +60,8 @@ export class CarService {
 
 	/**
 	 * This function creates a car.
-	 * @param car 
-	 * @param userId 
+	 * @param car
+	 * @param userId
 	 */
 
 	createCar(car, userId) {
@@ -84,7 +84,7 @@ export class CarService {
 
 	/**
 	 * This function removes a Car.
-	 * @param carId 
+	 * @param carId
 	 */
 
 	removeCar(carId: number) {
