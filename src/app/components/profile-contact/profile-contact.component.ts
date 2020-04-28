@@ -8,6 +8,12 @@ import { User } from 'src/app/models/user';
   templateUrl: './profile-contact.component.html',
   styleUrls: ['./profile-contact.component.css']
 })
+
+/*
+*  Name: Chris Rodgers/Stephen Orgill		Timestamp: 4/20/20 10:02 am
+*  Description: This class updates an existing user's contact information. Uses similar checks to the Sign-Up-Modal.
+*  Form is submitted only if each field meets specific requirements.
+*/
 export class ProfileContactComponent implements OnInit {
 
   profileObject: User;
@@ -29,6 +35,11 @@ export class ProfileContactComponent implements OnInit {
 
   constructor(private router: Router, private userService: UserService) { }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:04 am
+  *  Description: OnInit: Requests current user from SessionStorage and populates input fields accordingly.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   ngOnInit() {
     this.currentUser = this.userService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.profileObject = response;
@@ -46,6 +57,11 @@ export class ProfileContactComponent implements OnInit {
 
   }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:06 am
+  *  Description: Submits updated info to server if requirements are met.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   updatesContactInfo() {
     this.clearMessages();
     this.profileObject.firstName = this.firstName;
@@ -70,6 +86,11 @@ export class ProfileContactComponent implements OnInit {
     }
   }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:07 am
+  *  Description: Sets all error messages back to empty strings. Called at the beginning of updatesContactInfo().
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   clearMessages() {
     this.firstNameError = '';
     this.lastNameError = '';
@@ -79,6 +100,11 @@ export class ProfileContactComponent implements OnInit {
     this.serverResponseError = '';
   }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:07 am
+	*  Description: Checks each field against specific requirements. Called in updatesContactInfo().
+	*  Returns boolean: True if no errors; false if errors exist.
+  */
   validateFields(): boolean {
     let i = 0;
     if (this.profileObject.firstName === '') {
@@ -127,7 +153,23 @@ export class ProfileContactComponent implements OnInit {
 
   }
 
-  // RegEx functions
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:10 am
+  *  Description: Linked to HTML. Executes updatesContactInfo() upon pressing enter.
+  *  Returns void.
+  */
+  submitOnEnter(pressEvent) {
+    if (pressEvent.keyCode === 13) {
+      pressEvent.preventDefault();
+      this.updatesContactInfo();
+    }
+  }
+
+/*
+*  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:10 am
+*  Description: Regex functions used for validateFieldsComplete().
+*  Returns booleans: True if passing test; false if failing test.
+*/
 
   validateName(name) {
     const re = new RegExp('^[a-zA-Z\\u00C0-\\u017F]+[- ]?[a-zA-Z\\u00C0-\\u017F]+$');
@@ -143,14 +185,5 @@ export class ProfileContactComponent implements OnInit {
     const re = new RegExp('^\\w+\\.?\\w+@\\w+\\.[a-zA-Z]{2,4}$');
     return re.test(email);
   }
-
-  // Submit on Enter
-  submitOnEnter(pressEvent) {
-    if (pressEvent.keyCode === 13) {
-      pressEvent.preventDefault();
-      this.updatesContactInfo();
-    }
-  }
-
 
 }

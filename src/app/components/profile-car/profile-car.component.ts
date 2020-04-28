@@ -7,6 +7,11 @@ import { Car } from 'src/app/models/car';
   templateUrl: './profile-car.component.html',
   styleUrls: ['./profile-car.component.css']
 })
+
+/*
+*  Name: Chris Rodgers/Stephen Orgill		Timestamp: 4/20/20 10:11 am
+*  Description: This class updates an existing user's vehicle information.
+*/
 export class ProfileCarComponent implements OnInit {
 
   make: string;
@@ -19,8 +24,12 @@ export class ProfileCarComponent implements OnInit {
 
   constructor(private carService: CarService) { }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:12 am
+  *  Description: OnInit: Requests current user from SessionStorage and populates vehicle info fields accordingly.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   ngOnInit() {
-
     this.carService.getCarByUserId2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.currentCar = response;
       this.make = response.make;
@@ -35,6 +44,11 @@ export class ProfileCarComponent implements OnInit {
       });
   }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:13 am
+  *  Description: Submits updated info to server.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   updatesCarInfo() {
     this.success = '';
     this.httpResponseError = '';
@@ -64,7 +78,11 @@ export class ProfileCarComponent implements OnInit {
     }
   }
 
-  // Submit on Enter
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:13 am
+  *  Description: Linked to HTML. Executes updatesCarInfo() upon pressing enter.
+  *  Returns void.
+  */
   submitOnEnter(pressEvent) {
     if (pressEvent.keyCode === 13) {
       pressEvent.preventDefault();

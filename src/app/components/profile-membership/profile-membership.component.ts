@@ -6,6 +6,11 @@ import { User } from 'src/app/models/user';
   templateUrl: './profile-membership.component.html',
   styleUrls: ['./profile-membership.component.css']
 })
+
+/*
+*  Name: Chris Rodgers/Stephen Orgill		Timestamp: 4/20/20 10:19 am
+*  Description: This class updates an existing user's driver/rider status and active user status information.
+*/
 export class ProfileMembershipComponent implements OnInit {
   profileObject: User = new User();
   currentUser: any = '';
@@ -13,6 +18,11 @@ export class ProfileMembershipComponent implements OnInit {
   httpResponseError: string;
   constructor(private userService: UserService) { }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:20 am
+  *  Description: OnInit: Requests current user from SessionStorage and populates input fields accordingly.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   ngOnInit() {
     this.currentUser = this.userService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.profileObject = response;
@@ -23,6 +33,11 @@ export class ProfileMembershipComponent implements OnInit {
       });
   }
 
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:21 am
+  *  Description: Submits updated info to server.
+  *  Warns user of server error if HTTP request is unsuccessful.
+  */
   updatesMembershipInfo() {
     this.success = '';
     this.httpResponseError = '';
@@ -36,7 +51,11 @@ export class ProfileMembershipComponent implements OnInit {
     );
   }
 
-  // Submit on Enter
+  /*
+  *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:22 am
+  *  Description: Linked to HTML. Executes updatesMembershipInfo() upon pressing enter.
+  *  Returns void.
+  */
   submitOnEnter(pressEvent) {
     if (pressEvent.keyCode === 13) {
       pressEvent.preventDefault();
