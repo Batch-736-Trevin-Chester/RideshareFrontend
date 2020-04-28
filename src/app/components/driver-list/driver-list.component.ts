@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user-service/user.service';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { BatchService } from 'src/app/services/batch-service/batch.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-driver-list',
@@ -18,176 +18,339 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./driver-list.component.css']
 })
 export class DriverListComponent implements OnInit {
-
+  @ViewChild('map', null) mapElement: any;
+  map: google.maps.Map;
   location: string = 'Morgantown, WV';
   mapProperties: {};
   availableCars: Array<any> = [];
   drivers: Array<any> = [];
-  tempCar: Car;
+  modalRef: BsModalRef;
+  miToM = 1609.34375;
 
+  //  --------EXAMPLE CODE--------
+  rows: Array<any> = [];
+  columns: Array<any> = [
+    {
+      title: 'Name',
+      name: 'name',
+    },
+    {
+      title: 'Distance',
+      name: 'distanceText',
+      sort: 'distanceValue'
+    },
+    {
+      title: 'Time',
+      name: 'durationText',
+      sort: 'durationValue'
+    },
+    {
+      title: 'Total Seats',
+      name: 'totalSeats',
+      sort: '',
+    },
+    {
+      title: 'Available Seats',
+      name: 'avSeats',
+      sort: '',
+    }
+  ];
+  public page: number = 1;
+  public itemsPerPage: number = 10;
+  public maxSize: number = 5;
+  public numPages: number = 1;
+  public length: number = 0;
 
-  @ViewChild('map', null) mapElement: any;
-  map: google.maps.Map;
+  config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
+    filtering: { filterString: '' },
+    className: ['table-striped', 'table-bordered']
+  };
 
-  constructor(private http: HttpClient, private userService: UserService, private carService: CarService) { }
+  private data: Array<any>;
+  chosenCell: any;
 
-  ngOnInit() {
+  constructor(private http: HttpClient, private userService: UserService, private carServ: CarService, private modalServ: BsModalService) {
+  }
+  //  --------END OF EXAMPLE CODE--------
+
+  ngOnInit(): void {
+
     this.drivers = [];
-
-    this.userService.getRidersForLocation1(this.location).subscribe(
-      res => {
-        //console.log(res);
-        res.forEach(element => {
+    this.userService.getRidersForLocation1(this.location).subscribe(res => {
+      res.forEach(element => {
+        this.carServ.getCarByUserId2(element.userId).subscribe((data) => {
           this.drivers.push({
-            'id': element.userId,
-            'name': element.firstName + " " + element.lastName,
-            'origin': element.hCity + "," + element.hState,
-            'email': element.email,
-            'phone': element.phoneNumber
+            id: element.userId,
+            name: element.firstName + ' ' + element.lastName,
+            origin: element.hCity + ',' + element.hState,
+            email: element.email,
+            phone: element.phoneNumber,
+            durationText: '',
+            distanceText: '',
+            durationValue: 0,
+            distanceValue: 0,
+            avSeats: data.availableSeats,
+            totalSeats: data.seats
           });
+          this.filter(-1, 5 * this.miToM );
+          // tslint:disable-next-line: variable-name
+          const _this = this;
+          setTimeout( () => {
+
+            let count = 0;
+
+            _this.drivers.forEach(element2 => {
+              if (element2.distanceText != '') {
+                count++;
+              }
+            });
+            if (count == _this.length) {
+              _this.filter(-1, 5 * _this.miToM);
+            }
+          } , 500);
         });
       });
-    /*this.drivers.push({'id': '1','name': 'Ed Ogeron','origin':'Reston, VA', 'email': 'ed@gmail.com', 'phone':'555-555-5555'});
-    this.drivers.push({'id': '2','name': 'Nick Saban','origin':'Oklahoma, OK', 'email': 'nick@gmail.com', 'phone':'555-555-5555'});
-    this.drivers.push({'id': '3','name': 'Bobbie sfsBowden','origin':'Texas, TX', 'email': 'bobbie@gmail.com', 'phone':'555-555-5555'});
-    this.drivers.push({'id': '4','name': 'Les Miles','origin':'New York, NY', 'email': 'les@gmail.com', 'phone':'555-555-5555'});
-    this.drivers.push({'id': '5','name': 'Bear Bryant','origin':'Arkansas, AR', 'email': 'bear@gmail.com', 'phone':'555-555-5555'});*/
-    //console.log(this.drivers);
-    this.getGoogleApi();
+    });
 
+    this.getGoogleApi();
     this.sleep(2000).then(() => {
       this.mapProperties = {
-        center: new google.maps.LatLng(Number(sessionStorage.getItem("lat")), Number(sessionStorage.getItem("lng"))),
+        center: new google.maps.LatLng(
+          Number(sessionStorage.getItem('lat')),
+          Number(sessionStorage.getItem('lng'))
+        ),
         zoom: 15,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
-      this.map = new google.maps.Map(this.mapElement.nativeElement, this.mapProperties);
-      // get all routes 
-      this.displayDriversList(this.location, this.drivers);
+      this.map = new google.maps.Map(
+        this.mapElement.nativeElement,
+        this.mapProperties
+      );
+      // get all routes
       // show drivers on map
       this.showDriversOnMap(this.location, this.drivers);
     });
   }
+
+
+
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   getGoogleApi() {
-    this.http.get(`${environment.loginUri}getGoogleApi`)
-      .subscribe(
-        (response) => {
-          //console.log(response);
-          if (response["googleMapAPIKey"] != undefined) {
-            new Promise((resolve) => {
-              let script: HTMLScriptElement = document.createElement('script');
-              script.addEventListener('load', r => resolve());
-              script.src = `http://maps.googleapis.com/maps/api/js?key=${response["googleMapAPIKey"][0]}`;
-              document.head.appendChild(script);
-            });
-          }
-        }
-      );
-  }
-
-  showDriversOnMap(origin, drivers) {
-    drivers.forEach(element => {
-      var directionsService = new google.maps.DirectionsService;
-      var directionsRenderer = new google.maps.DirectionsRenderer({
-        draggable: true,
-        map: this.map
-      });
-      this.displayRoute(origin, element.origin, directionsService, directionsRenderer);
-    });
-  }
-
-
-  displayRoute(origin, destination, service, display) {
-    service.route({
-      origin: origin,
-      destination: destination,
-      travelMode: 'DRIVING',
-      //avoidTolls: true
-    }, function (response, status) {
-      if (status === 'OK') {
-        display.setDirections(response);
-      } else {
-        alert('Could not display directions due to: ' + status);
+    this.http.get(`${environment.loginUri}getGoogleApi`).subscribe(response => {
+      if (response['googleMapAPIKey'] != undefined) {
+        // tslint:disable-next-line: no-unused-expression
+        new Promise(resolve => {
+          const script: HTMLScriptElement = document.createElement('script');
+          script.addEventListener('load', r => resolve());
+          script.src = `http://maps.googleapis.com/maps/api/js?key=${response['googleMapAPIKey'][0]}`;
+          document.head.appendChild(script);
+        });
       }
     });
   }
 
-
-  displayDriversList(origin, drivers) {
-    let origins = [];
-    //set origin
-    origins.push(origin)
-
-    const thing = this.carService;
-
-    var outputDiv = document.getElementById('output');
+  showDriversOnMap(origin, drivers) {
     drivers.forEach(element => {
-      console.log(element);
-      var service = new google.maps.DistanceMatrixService;
-      service.getDistanceMatrix({
-        origins: origins,
-        destinations: [element.origin],
-        travelMode: google.maps.TravelMode.DRIVING,
-        unitSystem: google.maps.UnitSystem.IMPERIAL,
-        avoidHighways: false,
-        avoidTolls: false
-      }, function (response, status) {
-        if (status !== 'OK') {
-          alert('Error was: ' + status);
-        } else {
-          var originList = response.originAddresses;
-          var destinationList = response.destinationAddresses;
-          var results = response.rows[0].elements;
-          //console.log(results[0].distance.text);
-          var name = element.name;
-
-          thing.getCarByUserId2(element.id).subscribe((response) => {
-            this.tempCar = response;
-            console.log('tempCar: ' + this.tempCar + ' user ' + element.id);
-
-
-
-
-            console.log('element: ' + element);
-            outputDiv.innerHTML += `<tr><td class="col">${name}</td>
-                                  <td class="col">${results[0].distance.text}</td>
-                                  <td class="col">${results[0].duration.text}</td>
-                                  <td class="col">${this.tempCar.availableSeats}</td>
-                                  <td class="col">${this.tempCar.seats}</td>
-                                  <td class="col">
-                                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCentered${element.id}"> View</button>
-                                    <div class="col-lg-5">
-                                     <div class="modal" id="exampleModalCentered${element.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredLabel" aria-hidden="true">
-                                      <div class="modal-dialog modal-dialog-centered" role="document">
-                                          <div class="modal-content">
-                                              <div class="modal-header">
-                                                  <h5 class="modal-title" id="exampleModalCenteredLabel">Contact Info:</h5>
-                                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                     <span aria-hidden="true">×</span>
-                                                   </button>
-                                              </div>
-                                              <div class="modal-body">
-                                                  <h1>${name}</h1>
-                                                  <h3>Email: ${element.email}</h3>         
-                                                  <h3>Phone: ${element.phone}</h3>                 
-                                              </div>
-                                              <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                              </div>
-                                            </div>
-                                         </div>
-                                       </div>
-                                  </div>`;
-          });
-        }
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer({
+        draggable: true,
+        map: this.map
       });
-
+      this.displayRoute(
+        origin,
+        element.origin,
+        directionsService,
+        directionsRenderer
+      );
     });
   }
 
+  displayRoute(origin, destination, service, display) {
+    service.route(
+      {
+        // tslint:disable-next-line: object-literal-shorthand
+        origin: origin,
+        // tslint:disable-next-line: object-literal-shorthand
+        destination: destination,
+        travelMode: 'DRIVING'
+        // avoidTolls: true
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          display.setDirections(response);
+        } else {
+          alert('Could not display directions due to: ' + status);
+        }
+      }
+    );
+  }
+
+  displayDriversList(origin, drivers) {
+    // tslint:disable-next-line: prefer-const
+    let origins = [];
+    // set origin
+    origins.push(origin);
+    drivers.forEach(element => {
+      const service = new google.maps.DistanceMatrixService();
+      service.getDistanceMatrix(
+        {
+          // tslint:disable-next-line: object-literal-shorthand
+          origins: origins,
+          destinations: [element.origin],
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: google.maps.UnitSystem.IMPERIAL,
+          avoidHighways: false,
+          avoidTolls: false
+        },
+        (response, status) => {
+          if (status !== 'OK') {
+            alert('Error was: ' + status);
+          } else {
+            const results = response.rows[0].elements;
+            element.distanceText = results[0].distance.text;
+            element.durationText = results[0].duration.text;
+            element.distanceValue = results[0].distance.value;
+            element.durationValue = results[0].duration.value;
+          }
+        }
+      );
+    });
+  }
+
+  // --------------EXAMPLE SORT, FILTER AND PAGINATION FUNCTIONS BELOW--------------
+  changePage(page: any, data: Array<any> = this.data): Array<any> {
+    const start = (page.page - 1) * page.itemsPerPage;
+    const end = page.itemsPerPage > -1 ? start + page.itemsPerPage : data.length;
+    return data.slice(start, end);
+  }
+
+  changeSort(data: any, config: any): any {
+    if (!config.sorting) {
+      return data;
+    }
+
+    const columns = this.config.sorting.columns || [];
+    let columnName: string = void 0;
+    let sort: string = void 0;
+
+    // tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < columns.length; i++) {
+      if (columns[i].sort !== '' && columns[i].sort !== false) {
+        columnName = columns[i].name;
+        sort = columns[i].sort;
+      }
+    }
+
+    if (!columnName) {
+      return data;
+    }
+
+    // simple sorting
+    return data.sort((previous: any, current: any) => {
+      if (columnName == 'distanceText') {
+        columnName = 'distanceValue';
+      } else if (columnName == 'durationText') {
+        columnName = 'durationValue';
+      }
+      if (previous[columnName] > current[columnName]) {
+        return sort === 'desc' ? -1 : 1;
+      } else if (previous[columnName] < current[columnName]) {
+        return sort === 'asc' ? -1 : 1;
+      }
+      return 0;
+    });
+  }
+
+  changeFilter(data: any, config: any): any {
+    let filteredData: Array<any> = data;
+    this.columns.forEach((column: any) => {
+      if (column.filtering) {
+        filteredData = filteredData.filter((item: any) => {
+          return item[column.name].match(column.filtering.filterString);
+        });
+      }
+    });
+
+    if (!config.filtering) {
+      return filteredData;
+    }
+
+    if (config.filtering.columnName) {
+      return filteredData.filter((item: any) =>
+        item[config.filtering.columnName].match(
+          this.config.filtering.filterString
+        )
+      );
+    }
+
+    const tempArray: Array<any> = [];
+    filteredData.forEach((item: any) => {
+      let flag = false;
+      this.columns.forEach((column: any) => {
+        if (
+          item[column.name].toString().match(this.config.filtering.filterString)
+        ) {
+          flag = true;
+        }
+      });
+      if (flag) {
+        tempArray.push(item);
+      }
+    });
+    filteredData = tempArray;
+
+    return filteredData;
+  }
+
+  onChangeTable(
+    config: any,
+    page: any = { page: this.page, itemsPerPage: this.itemsPerPage }
+  ): any {
+    if (config.filtering) {
+      Object.assign(this.config.filtering, config.filtering);
+    }
+
+    if (config.sorting) {
+      Object.assign(this.config.sorting, config.sorting);
+    }
+
+    const filteredData = this.changeFilter(this.data, this.config);
+    const sortedData = this.changeSort(filteredData, this.config);
+    this.rows =
+      page && config.paging ? this.changePage(page, sortedData) : sortedData;
+    this.length = sortedData.length;
+  }
+
+  public onCellClick(data: any, template: TemplateRef<any>): any {
+    this.chosenCell = data.row;
+    this.modalRef = this.modalServ.show(template);
+  }
+
+  filter(min: number, max: number) {
+    this.data = [];
+    if (min > max && max != -1) {
+      return;
+    }
+
+    this.drivers.forEach(driver => {
+      const dInM = driver.distanceValue;
+      if (dInM >= min) {
+        if (max == -1) {
+          this.data.push(driver);
+        } else if ( dInM <= max) {
+          this.data.push(driver);
+        }
+      }
+    });
+
+    this.displayDriversList(this.location, this.data);
+    this.length = this.data.length;
+    this.onChangeTable(this.config);
+  }
 }
