@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 export class AdminService {
 
   url: string = environment.adminUri;
+  loginUrl: string = environment.adminLoginUri;
+  verifyCodeUrl: string = environment.verificationCodeUri;
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -24,9 +26,9 @@ export class AdminService {
 		return this.http.get<Admin[]>(this.url);
   }
 
-  adminLogin(adminLoginObject): Observable<string> {
-    return this.http.post<string>(
-      this.url,
+  adminLogin(adminLoginObject): Observable<boolean> {
+    return this.http.post<boolean>(
+      this.loginUrl,
       adminLoginObject,
       this.httpOptions
     );
@@ -34,7 +36,7 @@ export class AdminService {
 
   adminVerificationSubmission(adminLoginObject): Observable<Admin> {
     return this.http.post<Admin>(
-      this.url,
+      this.verifyCodeUrl,
       adminLoginObject,
       this.httpOptions
     );

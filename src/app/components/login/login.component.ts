@@ -210,8 +210,7 @@ export class LoginComponent implements OnInit {
 				// Send HttpRequest with object
 				this.adminService.adminLogin(this.adminLoginObject).subscribe(
 					response => {
-						const boolVar = 'bool1';
-						if (response[boolVar] === true) {
+						if (response) {
 							this.displayVerificationField = true;
 						} else {
 							this.userNotFound = 'Admin not found';
@@ -249,7 +248,7 @@ export class LoginComponent implements OnInit {
 	}
 
 	/*
-	*  Name: Rodgers/Ledgister		Timestamp: 4/24/20 3:39 pm
+	*  Name: Rodgers/Ledgister/Trevor Miller		Timestamp: 4/28/20 5:21 pm
 	*  Description: Sends adminLoginObject with verification code for authentication. On success,
 	*  Authentication Service routes to Admin Home.
 	*  Returns void.
@@ -264,6 +263,8 @@ export class LoginComponent implements OnInit {
 					const checkFailed = this.authService.loginAsAdmin(response, this.adminLoginObject.userName);
 					if (checkFailed) {
 						this.verificationCodeError = 'Verification code did not match';
+					}else {
+						this.modalRef.hide();
 					}
 				},
 				(error) => {
