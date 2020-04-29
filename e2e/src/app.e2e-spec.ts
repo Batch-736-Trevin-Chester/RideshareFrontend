@@ -8,9 +8,15 @@ describe('workspace-project App', () => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getTitleText()).toEqual('rideshare-frontend app is running!');
+  it('should display homepage heading', () => {
+    page.goToHomepage();
+    expect(page.getTitleText()).toEqual('RideForce');
+  });
+
+  it('should display login modal', () => {
+    page.goToHomepage();
+    page.clickLoginButton();
+    expect(page.getModalTitle()).toEqual('Login');
   });
 
   afterEach(async () => {
