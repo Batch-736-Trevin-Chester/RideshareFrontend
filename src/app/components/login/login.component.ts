@@ -6,6 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth-service/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+import { stringify } from 'querystring';
+import { Admin } from 'src/app/models/admin';
+import { AdminService } from 'src/app/services/admin-service/admin.service';
 
 @Component({
 	selector: 'app-login',
@@ -37,14 +40,25 @@ export class LoginComponent implements OnInit {
 	chosenUserFullName: string = '';
 	userName: string = '';
 	passWord: string = '';
+	adminCheck: boolean = false;
 	totalPage: number = 1;
 	curPage: number = 1;
+
+	// Admin Login Shell
+	adminLoginObject = {
+		userName: '',
+		passWord: '',
+		verificationCode: ''
+	};
+
+	displayVerificationField = false;
 
 	showDropDown: boolean = false;
 	banned: boolean = false;
 
 	pwdError: string;
 	usernameError: string;
+	verificationCodeError: string;
 	userNotFound: string;
 	modalRef: BsModalRef;
 	httpResponseError: string;
@@ -57,7 +71,7 @@ export class LoginComponent implements OnInit {
 	 *
 	 */
 	constructor(private modalService: BsModalService, private userService: UserService, private http: HttpClient,
-		private authService: AuthService, public router: Router) { }
+		private adminService: AdminService, private authService: AuthService, public router: Router) { }
 
 	/**
 	 * When the component is initialized, the system checks for the session storage to validate. Once validated,
@@ -151,8 +165,9 @@ export class LoginComponent implements OnInit {
 	}
 
 	/*
-	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:39 am
+	*  Name: Chris Rodgers/Anthony Ledgister	Timestamp: 4/24/20 3:36 pm
 	*  Description: Submits username and password for validation. Sets name and userid on success.
+	*  If "Login as Admin" is checked, submits username and password to be verified as admin credentials.
 	*  Returns void.
 	*/
 	login() {
@@ -164,35 +179,55 @@ export class LoginComponent implements OnInit {
 		const passValidation = this.validateFields();
 		if (passValidation) {
 
-			this.http.get(`${environment.loginUri}?userName=${this.userName}&passWord=${this.passWord}`)
-				.subscribe(
-					(response) => {
-						console.log(response);
-						if (response['active'].toString() === 'true') {
-							if (response['passWord'] != undefined) {
-								this.pwdError = response['pwdError'][0];
-							}
-							if ((response['name'] != undefined) && (response['userid'] != undefined)) {
-								sessionStorage.setItem('name', response['name']);
-								sessionStorage.setItem('userid', response['userid']);
+			if (!this.adminCheck) {
+				this.http.get(`${environment.loginUri}?userName=${this.userName}&passWord=${this.passWord}`)
+					.subscribe(
+						(response) => {
+							if (response['active'].toString() === 'true') {
+								if (response['passWord'] != undefined) {
+									this.pwdError = response['pwdError'][0];
+								}
+								if ((response['name'] != undefined) && (response['userid'] != undefined)) {
+									sessionStorage.setItem('name', response['name']);
+									sessionStorage.setItem('userid', response['userid']);
 
-								// call landing page
-								// this.router.navigate(['landingPage']);
-								location.replace('drivers');
+									// call landing page
+									location.replace('drivers');
+								}
+								if (response['userNotFound'] != undefined) {
+									this.userNotFound = response['userNotFound'][0];
+								}
+							} else {
+								console.log(response['active']);
+								this.loginBanned();
 							}
-							if (response['userNotFound'] != undefined) {
-								this.userNotFound = response['userNotFound'][0];
-							}
-						} else {
-							console.log(response['active']);
-							this.loginBanned();
-						}
-					},
-					(error) => {
-						// this.log.error(error); [previous logging functionality]
-						this.httpResponseError = 'Cannot login at this time. Please try again later.';
+						}, (error) => {
+							// this.log.error(error); [previous logging functionality]
+							this.httpResponseError = 'Cannot login at this time. Please try again later.';
+						});
+			}
+		}
+		else {
+			// Set fields for adminLoginObject
+			this.adminLoginObject.userName = this.userName;
+			this.adminLoginObject.passWord = this.passWord;
+			this.adminLoginObject.verificationCode = '';
+			this.displayVerificationField = true;
+			// Send HttpRequest with object
+			this.adminService.adminLogin(this.adminLoginObject).subscribe(
+				response => {
+					if (response) {
+						this.displayVerificationField = true;
+					} else {
+						this.userNotFound = 'Admin not found';
 					}
-				);
+				},
+				(error) => {
+					// this.log.error(error); [previous logging functionality]
+					this.httpResponseError = 'Cannot login at this time. Please try again later.';
+				}
+			);
+
 		}
 	}
 
@@ -217,18 +252,69 @@ export class LoginComponent implements OnInit {
 		return true;
 	}
 
+	/*
+	*  Name: Rodgers/Ledgister/Trevor Miller		Timestamp: 4/28/20 5:21 pm
+	*  Description: Sends adminLoginObject with verification code for authentication. On success,
+	*  Authentication Service routes to Admin Home.
+	*  Returns void.
+	*/
+	submitVerificationCode() {
+		this.verificationCodeError = '';
+		this.httpResponseError = '';
+		if (this.adminLoginObject.verificationCode) {
+			// Http Method returns Admin object
+			this.adminService.adminVerificationSubmission(this.adminLoginObject).subscribe(
+				response => {
+					const checkFailed = this.authService.loginAsAdmin(response, this.adminLoginObject.userName);
+					if (checkFailed) {
+						this.verificationCodeError = 'Verification code did not match';
+					} else {
+						this.modalRef.hide();
+					}
+				},
+				(error) => {
+					// this.log.error(error); [previous logging functionality]
+					this.httpResponseError = 'Cannot login at this time. Please try again later.';
+				}
+			);
+		}
+	}
 
-/*
-*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:43 am
-*  Description: Linked to HTML. Executes login() upon pressing enter.
-*  Returns void.
-*/
+
+	/*
+	*  Name: Rodgers/Orgill		Timestamp: 4/20/20 9:43 am
+	*  Description: Linked to HTML. Executes login() upon pressing enter.
+	*  Returns void.
+	*/
 	// Submit on Enter
 	submitOnEnter(pressEvent) {
 		if (pressEvent.keyCode === 13) {
 			pressEvent.preventDefault();
 			this.login();
 		}
+	}
+
+	/*
+	*  Name: Rodgers/Ledgister		Timestamp: 4/24/20 4:35 pm
+	*  Description: Linked to HTML. Executes submitVerificationCode() upon pressing enter.
+	*  Returns void.
+	*/
+	submitVerificationOnEnter(pressEvent) {
+		if (pressEvent.keyCode === 13) {
+			pressEvent.preventDefault();
+			this.submitVerificationCode();
+		}
+	}
+
+	/*
+	*  Name: Rodgers/Ledgister		Timestamp: 4/24/20 4:35 pm
+	*  Description: Linked to HTML. Returns modal to regular login setup.
+	*  Returns void.
+	*/
+
+	resetLogin() {
+		this.displayVerificationField = false;
+		this.adminCheck = false;
 	}
 
 
