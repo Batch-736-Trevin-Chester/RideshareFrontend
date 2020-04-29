@@ -269,7 +269,7 @@ export class SignupModalComponent implements OnInit {
 
         let i = 0;
 
-        if (this.user.userName === '') {
+        if (this.user.userName === '' || this.user.userName === undefined) {
             this.userNameError = 'Username field required';
             i = 1;
         } else if (this.user.userName.length > 12 || this.user.userName.length < 3) {
@@ -280,7 +280,7 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
-        if (this.user.firstName === '') {
+        if (this.user.firstName === '' || this.user.firstName === undefined) {
             this.firstNameError = 'First name field required';
             i = 1;
         } else if (this.user.firstName.length > 30) {
@@ -291,7 +291,7 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
-        if (this.user.lastName === '') {
+        if (this.user.lastName === '' || this.user.lastName === undefined) {
             this.lastNameError = 'Last name field required';
             i = 1;
         } else if (this.user.lastName.length > 30) {
@@ -302,7 +302,7 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
-        if (this.user.phoneNumber === '') {
+        if (this.user.phoneNumber === '' || this.user.phoneNumber === undefined) {
             this.phoneNumberError = 'Phone number field required';
             i = 1;
         } else if (!(this.validatePhoneNumber(this.user.phoneNumber))) {
@@ -310,16 +310,11 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
-        if (this.user.email === '') {
+        if (this.user.email === '' || this.user.email === undefined) {
             this.emailError = 'Email field required';
             i = 1;
         } else if (!(this.validateEmail(this.user.email))) {
             this.emailError = 'Invalid email';
-            i = 1;
-        }
-
-        if (this.user.userName === '') {
-            this.userNameError = 'Username field required';
             i = 1;
         }
 
@@ -329,17 +324,17 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
-        if (this.user.hState === '') {
+        if (this.user.hState === '' || this.user.hState === undefined) {
             this.hStateError = 'State field required';
             i = 1;
         }
 
-        if (this.user.hAddress === '') {
+        if (this.user.hAddress === '' || this.user.hAddress === undefined) {
             this.hAddressError = 'Address field required';
             i = 1;
         }
 
-        if (this.user.hCity === '') {
+        if (this.user.hCity === '' || this.user.hCity === undefined) {
             this.hCityError = 'City field required';
             i = 1;
         }
