@@ -46,10 +46,10 @@ h5{
 }
 
 .myBtn {
-    margin-top:30px;
+    margin-top:20px;
     background-color: #F26925;
     color:white;
-    width:150px;
+    min-width: 250px;
     font-family:"Overpass";
     font-weight:bold;
     font-size:22px;
@@ -131,4 +131,30 @@ h5{
         width:50%;
     }
 }
+
+
+#disable_popup_wrapper {
+    display: none;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.459);
+    z-index: 2000;
+}
+
+.modal-content {
+    width: 25%;
+    margin: 10% auto;
+    height: auto;
+    padding: 30px 20px;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: .3rem;
+    outline: 0;
+}
+
 

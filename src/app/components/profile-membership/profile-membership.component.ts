@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from './../../services/auth-service/auth.service';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UserService } from 'src/app/services/user-service/user.service';
 import { User } from 'src/app/models/user';
+
+
 @Component({
   selector: 'app-profile-membership',
   templateUrl: './profile-membership.component.html',
@@ -16,7 +20,8 @@ export class ProfileMembershipComponent implements OnInit {
   currentUser: any = '';
   success: string;
   httpResponseError: string;
-  constructor(private userService: UserService) { }
+  
+  constructor(private userService: UserService,private authService: AuthService, private router: Router) { }
 
   /*
   *  Name: Rodgers/Orgill		Timestamp: 4/20/20 10:20 am
@@ -26,11 +31,42 @@ export class ProfileMembershipComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.userService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.profileObject = response;
+      console.log(this.profileObject);
     },
       error => {
         // logging can go here
         this.httpResponseError = 'Server not found. Try again later.';
       });
+  }
+
+
+
+  // Show popup
+  showPopup() {
+    document.getElementById("disable_popup_wrapper").style.display = "block";
+  }
+
+  hidePopup() {
+    document.getElementById("disable_popup_wrapper").style.display = "none";
+  }
+
+  logout() {
+    this.currentUser = '';
+    sessionStorage.removeItem("name");
+    sessionStorage.removeItem("userid");
+    this.router.navigate(['']);
+  }
+
+  toggleActive() {
+    if (this.profileObject.active) {
+        this.profileObject.active = !this.profileObject.active;
+        this.profileObject.acceptingRides = false;
+        this.userService.updatePreference('active', this.profileObject.active, this.profileObject.userId);
+        this.logout();
+    } else {
+      this.profileObject.active = !this.profileObject.active;
+      this.userService.updatePreference('active', this.profileObject.active, this.profileObject.userId);
+    }
   }
 
   /*

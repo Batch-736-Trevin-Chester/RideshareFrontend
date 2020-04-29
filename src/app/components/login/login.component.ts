@@ -167,19 +167,25 @@ export class LoginComponent implements OnInit {
 			this.http.get(`${environment.loginUri}?userName=${this.userName}&passWord=${this.passWord}`)
 				.subscribe(
 					(response) => {
-						if (response['passWord'] != undefined) {
-							this.pwdError = response['pwdError'][0];
-						}
-						if ((response['name'] != undefined) && (response['userid'] != undefined)) {
-							sessionStorage.setItem('name', response['name']);
-							sessionStorage.setItem('userid', response['userid']);
+						console.log(response);
+						if (response['active'].toString() === 'true') {
+							if (response['passWord'] != undefined) {
+								this.pwdError = response['pwdError'][0];
+							}
+							if ((response['name'] != undefined) && (response['userid'] != undefined)) {
+								sessionStorage.setItem('name', response['name']);
+								sessionStorage.setItem('userid', response['userid']);
 
-							// call landing page
-							// this.router.navigate(['landingPage']);
-							location.replace('drivers');
-						}
-						if (response['userNotFound'] != undefined) {
-							this.userNotFound = response['userNotFound'][0];
+								// call landing page
+								// this.router.navigate(['landingPage']);
+								location.replace('drivers');
+							}
+							if (response['userNotFound'] != undefined) {
+								this.userNotFound = response['userNotFound'][0];
+							}
+						} else {
+							console.log(response['active']);
+							this.loginBanned();
 						}
 					},
 					(error) => {

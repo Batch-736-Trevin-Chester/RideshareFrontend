@@ -14,6 +14,9 @@ export class AuthService {
 
 
 	@Output() fireIsLoggedIn: EventEmitter<any> = new EventEmitter<any>();
+
+	@Output() fireIsLoggedout: EventEmitter<any> = new EventEmitter<any>();
+
 	 loggedIn: boolean = false;
 
 
@@ -44,7 +47,7 @@ export class AuthService {
 			else{
 				this.router.navigate(['/home/drivers']);
 			}
-			
+
 			this.fireIsLoggedIn.emit(this.user);
 		} else {
 			return false;
@@ -63,6 +66,23 @@ export class AuthService {
 		} else {
 			return false;
 		}
+	}
+
+	logout() {
+		this.user = {};
+		this.admin = new Admin();
+		//clear all session
+		// this.name = '';
+		// this.admin = '';
+		// this.currentUser = '';
+		sessionStorage.removeItem("name");
+		sessionStorage.removeItem("userid");
+		//sessionStorage.clear(); 
+		this.router.navigate(['']);
+	  }
+
+	getEmitterLogOut() {
+		return this.fireIsLoggedout;
 	}
 
 	getEmitter() {

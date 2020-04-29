@@ -67,7 +67,7 @@ export class PreferenceComponent implements OnInit {
 
   toggleActive() {
     if (this.user.active) {
-      let text = prompt("Your Account Will Be Banned. Type 'Confirm' To Continued");
+      let text = prompt("Your Account Will Be Deactivated and Logged Out. Type 'Confirm' To Continue");
       if (text === 'Confirm') {
         this.user.active = !this.user.active;
         this.user.acceptingRides = false;

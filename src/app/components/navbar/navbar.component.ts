@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 import { UserService } from 'src/app/services/user-service/user.service';
 import { AuthService } from 'src/app/services/auth-service/auth.service';
 import { User } from 'src/app/models/user';
@@ -34,7 +34,17 @@ export class NavbarComponent implements OnInit {
    * @param authService A dependency of an auth service is injected.
    */
 
-  constructor(private router: Router, private userService: UserService, public authService: AuthService) { }
+  constructor(private router: Router, private userService: UserService, public authService: AuthService) {
+    router.events.forEach((event) => {
+      if (event instanceof NavigationStart) {
+      }
+      if (sessionStorage.getItem('userid') != null) {
+        this.currentUser = sessionStorage.getItem('name');
+      } else {
+        this.currentUser = '';
+      }
+    });
+   }
 
   /**
    * This is an OnInit function that sets the token to the parsed token string.
