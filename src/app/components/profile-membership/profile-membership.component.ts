@@ -31,7 +31,6 @@ export class ProfileMembershipComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.userService.getUserById2(sessionStorage.getItem('userid')).subscribe((response) => {
       this.profileObject = response;
-      console.log(this.profileObject);
     },
       error => {
         // logging can go here

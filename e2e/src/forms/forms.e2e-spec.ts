@@ -18,7 +18,33 @@ describe('workspace-project Forms', () => {
   it('should login registered user', () => {
     page.goToHomepage();
     page.loginUser();
-    expect(page.getInfoAfterLogin()).toEqual('Chris Rodgers');
+    expect(page.getInfoAfterLogin()).toEqual('Salvidor Migheli');
+  });
+
+  it('should update user contact info', () => {
+    page.goToHomepage();
+    page.loginUser();
+    page.navigateToProfile();
+    page.updateContactInfo();
+    expect(page.getUpdateContactSuccess()).toEqual('Updated Successfully!');
+  });
+
+  it('should update user location', () => {
+    page.goToHomepage();
+    page.loginUser();
+    page.navigateToProfile();
+    page.navigateToLocation();
+    page.updateLocationInfo();
+    expect(page.getUpdateLocationSuccess()).toEqual('Updated successfully!');
+  });
+
+  it('should update user car info', () => {
+    page.goToHomepage();
+    page.loginUser();
+    page.navigateToProfile();
+    page.navigateToCarInfo();
+    page.updateCarInfo();
+    expect(page.getUpdateCarSuccess()).toEqual('Updated Successfully!');
   });
 
 //   afterEach(async () => {

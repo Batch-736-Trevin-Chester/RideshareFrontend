@@ -122,6 +122,7 @@ export class DriverListComponent implements OnInit {
       });
     });
 
+    // Uncomment for e2e testing
     // this.ngZone.runOutsideAngular(() => {
     //   setInterval(() => {
     //     this.ngZone.run(() => {
@@ -129,7 +130,10 @@ export class DriverListComponent implements OnInit {
     //     });
     //   }, 2500);
     // });
+
+    // Comment for e2e testing
     this.getGoogleApi();
+
     this.sleep(2000).then(() => {
       this.mapProperties = {
         center: new google.maps.LatLng(

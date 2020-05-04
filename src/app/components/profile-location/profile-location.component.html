@@ -95,12 +95,12 @@
         <label for="zipcode" class="col-sm-4 col-form-label">Zipcode:</label>
         <div class="col-sm-4">
             <input [(ngModel)]=zipcode type="text" class="form-control" id="zipcode">
-            <p *ngIf="success != ''" class="success">{{success}}</p>
-            <p *ngIf="error != ''" class="error">{{error}}</p>
-            <p *ngIf="addError != ''" class="error">{{addError}}</p>
+            <p *ngIf="success != ''" class="success" id="success">{{success}}</p>
+            <p *ngIf="error != ''" class="error" id="error">{{error}}</p>
+            <p *ngIf="addError != ''" class="error" id="addError">{{addError}}</p>
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary myBtn" (click)="updateAddressInfo()">Save</button>
+    <button type="submit" id="save" class="btn btn-primary myBtn" (click)="updateAddressInfo()">Save</button>
     <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
 </div>
