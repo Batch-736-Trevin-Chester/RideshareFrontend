@@ -38,11 +38,11 @@
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="phone" [(ngModel)]=phone value="{{ profileObject?.phoneNumber }}">
                 <p *ngIf="phoneNumberError != ''" class="error">{{phoneNumberError}}</p>
-                <p *ngIf="success != ''" class="success">{{success}}</p>
+                <p *ngIf="success != ''" class="success" id="success">{{success}}</p>
             </div>
         </div>
         
-    <button type="submit" class="btn btn-primary myBtn" (click)="updatesContactInfo()">Save</button>
+    <button type="submit" id="save" class="btn btn-primary myBtn" (click)="updatesContactInfo()">Save</button>
     <p *ngIf="serverResponseError != ''" class="error">{{serverResponseError}}</p>
     <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
 </div>
