@@ -51,19 +51,11 @@
     <input (keydown)="hAddressError = ''" id="hAddress" type="text" [(ngModel)]="user.hAddress" class="form-control" />
     <p *ngIf="hAddressError != ''" class="error">{{hAddressError}}</p>
 
-<<<<<<< HEAD
     <label for="hCity">City</label>
     <input (keydown)="hCityError = ''" id="hCity" type="text" [(ngModel)]="user.hCity" class="form-control" />
     <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
 
     <label for="hState">State</label>
-=======
-    <label id="City">City</label>
-    <input (keydown)="hCityError = ''" id="hCity" type="text" [(ngModel)]="user.hCity" class="form-control" />
-    <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
-
-    <label id="State">State</label>
->>>>>>> a4383a1b949428cff3c369f330dac046b0c71985
     <select class="form-control" [(ngModel)]="user.hState" id="hState" (change)="hStateError = ''">
       <option value="none" selected disabled hidden>
       </option>
