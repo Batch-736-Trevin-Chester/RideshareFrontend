@@ -51,11 +51,19 @@
     <input (keydown)="hAddressError = ''" id="hAddress" type="text" [(ngModel)]="user.hAddress" class="form-control" />
     <p *ngIf="hAddressError != ''" class="error">{{hAddressError}}</p>
 
+<<<<<<< HEAD
     <label for="hCity">City</label>
     <input (keydown)="hCityError = ''" id="hCity" type="text" [(ngModel)]="user.hCity" class="form-control" />
     <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
 
     <label for="hState">State</label>
+=======
+    <label id="City">City</label>
+    <input (keydown)="hCityError = ''" id="hCity" type="text" [(ngModel)]="user.hCity" class="form-control" />
+    <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
+
+    <label id="State">State</label>
+>>>>>>> a4383a1b949428cff3c369f330dac046b0c71985
     <select class="form-control" [(ngModel)]="user.hState" id="hState" (change)="hStateError = ''">
       <option value="none" selected disabled hidden>
       </option>
@@ -85,7 +93,11 @@
 
     <!-- Submit Button -->
     <div class="btn-container">
+<<<<<<< HEAD
       <button type="submit" id="submit" class="btn btn-primary register" (click)="submitUser()">Submit</button>
+=======
+      <button type="submit" id="signup" class="btn btn-primary register" (click)="submitUser()">Submit</button>
+>>>>>>> a4383a1b949428cff3c369f330dac046b0c71985
     </div>
     <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
 
