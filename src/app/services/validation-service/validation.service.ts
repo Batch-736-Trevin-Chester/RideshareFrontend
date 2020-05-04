@@ -87,7 +87,8 @@ export class ValidationService {
 	 */
 	validateAddress(address: string, city: string, state: string): Observable<Address> {
 		// return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=${Response['googleMapAPIKey'][0]}`);
-		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=`);
+		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=
+		AIzaSyBT0pAD73FXkgZNRxnJyyUoRqzlgIe5Zhs`);
 	}
 
 	/**

@@ -122,14 +122,14 @@ export class DriverListComponent implements OnInit {
       });
     });
 
-    this.ngZone.runOutsideAngular(() => {
-      setInterval(() => {
-        this.ngZone.run(() => {
-          this.getGoogleApi();
-        });
-      }, 2500);
-    });
-    // this.getGoogleApi();
+    // this.ngZone.runOutsideAngular(() => {
+    //   setInterval(() => {
+    //     this.ngZone.run(() => {
+    //       this.getGoogleApi();
+    //     });
+    //   }, 2500);
+    // });
+    this.getGoogleApi();
     this.sleep(2000).then(() => {
       this.mapProperties = {
         center: new google.maps.LatLng(
