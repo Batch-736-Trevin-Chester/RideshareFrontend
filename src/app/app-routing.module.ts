@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: 'all-drivers', component: DriverInfoComponent },
   { path: 'login', component: LoginComponent },
   { path: 'login/admin', component: AdminLoginComponent },
-  { path: 'login/adminhome', component: AdminComponent },
+  { path: 'admin', component: AdminComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'new/car', component: CarRegisterComponent },
   { path: 'car', component: MyCarComponent },
