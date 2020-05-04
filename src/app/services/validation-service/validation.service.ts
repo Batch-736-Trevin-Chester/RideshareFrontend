@@ -14,7 +14,7 @@ export class ValidationService {
 	constructor(private http: HttpClient) { }
 
 	googleUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
-	// key = `${Response['googleMapAPIKey'][0]}`
+	// key = `${Response['googleMapAPIKey']}`;
 	private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
 	/**
@@ -86,6 +86,7 @@ export class ValidationService {
 	 * This function validates the address
 	 */
 	validateAddress(address: string, city: string, state: string): Observable<Address> {
+		// return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=${Response['googleMapAPIKey'][0]}`);
 		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=`);
 	}
 

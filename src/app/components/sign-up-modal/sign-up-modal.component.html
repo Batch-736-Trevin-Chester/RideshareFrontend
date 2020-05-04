@@ -51,11 +51,11 @@
     <input (keydown)="hAddressError = ''" id="hAddress" type="text" [(ngModel)]="user.hAddress" class="form-control" />
     <p *ngIf="hAddressError != ''" class="error">{{hAddressError}}</p>
 
-    <label id="City">City</label>
+    <label for="hCity">City</label>
     <input (keydown)="hCityError = ''" id="hCity" type="text" [(ngModel)]="user.hCity" class="form-control" />
     <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
 
-    <label id="State">State</label>
+    <label for="hState">State</label>
     <select class="form-control" [(ngModel)]="user.hState" id="hState" (change)="hStateError = ''">
       <option value="none" selected disabled hidden>
       </option>
@@ -63,7 +63,7 @@
     </select>
     <p *ngIf="hStateError != ''" class="error">{{hStateError}}</p>
 
-    <label id="Zip">Zip Code</label>
+    <label for="hZip">Zip Code</label>
     <input (keydown)="hZipError = ''" id="hZip" type="number" [(ngModel)]="user.hZip" class="form-control" />
     <p *ngIf="hZipError != ''" class="error">{{hZipError}}</p>
 
@@ -74,14 +74,14 @@
           <input type="checkbox" id="driver" [(ngModel)]="isDriver" /> Driver
         </label>
         <br>
-        <label class="btn btn-primary">
+        <label class="btn btn-primary" id="rider-btn">
           <input type="checkbox" id="rider" [(ngModel)]="isRider" /> Rider
         </label>
       </div>
     </div>
 
     <!-- Appears upon successful registration via submitUser() -->
-    <p *ngIf="success != ''" class="success">{{success}}</p>
+    <p *ngIf="success != ''" class="success" id="success">{{success}}</p>
 
     <!-- Submit Button -->
     <div class="btn-container">
