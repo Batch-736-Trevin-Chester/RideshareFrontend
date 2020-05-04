@@ -21,7 +21,7 @@ export class CheckForms {
         element(by.id('hState')).$('[value="TX"]').click();
         element(by.id('hZip')).sendKeys('78114');
         element(by.id('rider-btn')).click();
-        element(by.id('submit')).click();
+        element(by.id('signup')).click();
     }
 
     getRegistrationSuccess() {

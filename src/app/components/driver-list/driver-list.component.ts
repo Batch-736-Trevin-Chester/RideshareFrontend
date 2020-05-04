@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, NgZone } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user-service/user.service';
@@ -76,7 +76,8 @@ export class DriverListComponent implements OnInit {
   private data: Array<any>;
   chosenCell: any;
 
-  constructor(private http: HttpClient, private userService: UserService, private carServ: CarService, private modalServ: BsModalService) {
+  constructor(private http: HttpClient, private userService: UserService, private carServ: CarService, private modalServ: BsModalService,
+    private ngZone: NgZone) {
   }
   //  --------END OF EXAMPLE CODE--------
 
@@ -121,7 +122,14 @@ export class DriverListComponent implements OnInit {
       });
     });
 
-    this.getGoogleApi();
+    this.ngZone.runOutsideAngular(() => {
+      setInterval(() => {
+        this.ngZone.run(() => {
+          this.getGoogleApi();
+        });
+      }, 2500);
+    });
+    // this.getGoogleApi();
     this.sleep(2000).then(() => {
       this.mapProperties = {
         center: new google.maps.LatLng(
