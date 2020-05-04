@@ -51,11 +51,11 @@
     <input (keydown)="hAddressError = ''" id="hAddress" type="text" [(ngModel)]="user.hAddress" class="form-control" />
     <p *ngIf="hAddressError != ''" class="error">{{hAddressError}}</p>
 
-    <label id="hCity">City</label>
-    <input (keydown)="hCityError = ''" type="text" [(ngModel)]="user.hCity" class="form-control" />
+    <label id="City">City</label>
+    <input (keydown)="hCityError = ''" id="hCity" type="text" [(ngModel)]="user.hCity" class="form-control" />
     <p *ngIf="hCityError != ''" class="error">{{hCityError}}</p>
 
-    <label id="hState">State</label>
+    <label id="State">State</label>
     <select class="form-control" [(ngModel)]="user.hState" id="hState" (change)="hStateError = ''">
       <option value="none" selected disabled hidden>
       </option>
@@ -63,8 +63,8 @@
     </select>
     <p *ngIf="hStateError != ''" class="error">{{hStateError}}</p>
 
-    <label id="hZip">Zip Code</label>
-    <input (keydown)="hZipError = ''" type="number" [(ngModel)]="user.hZip" class="form-control" />
+    <label id="Zip">Zip Code</label>
+    <input (keydown)="hZipError = ''" id="hZip" type="number" [(ngModel)]="user.hZip" class="form-control" />
     <p *ngIf="hZipError != ''" class="error">{{hZipError}}</p>
 
     <!-- Driver/Rider Selection -->
@@ -85,7 +85,7 @@
 
     <!-- Submit Button -->
     <div class="btn-container">
-      <button type="submit" class="btn btn-primary register" (click)="submitUser()">Submit</button>
+      <button type="submit" id="signup" class="btn btn-primary register" (click)="submitUser()">Submit</button>
     </div>
     <p class="alert alert-danger" *ngIf="httpResponseError"><strong>{{httpResponseError}}</strong></p>
 
