@@ -205,29 +205,28 @@ export class LoginComponent implements OnInit {
 							// this.log.error(error); [previous logging functionality]
 							this.httpResponseError = 'Cannot login at this time. Please try again later.';
 						});
-			}
-		}
-		else {
-			// Set fields for adminLoginObject
-			this.adminLoginObject.userName = this.userName;
-			this.adminLoginObject.passWord = this.passWord;
-			this.adminLoginObject.verificationCode = '';
-			this.displayVerificationField = true;
-			// Send HttpRequest with object
-			this.adminService.adminLogin(this.adminLoginObject).subscribe(
-				response => {
-					if (response) {
-						this.displayVerificationField = true;
-					} else {
-						this.userNotFound = 'Admin not found';
+			} else {
+				// Set fields for adminLoginObject
+				this.adminLoginObject.userName = this.userName;
+				this.adminLoginObject.passWord = this.passWord;
+				this.adminLoginObject.verificationCode = '';
+				this.displayVerificationField = true;
+				// Send HttpRequest with object
+				this.adminService.adminLogin(this.adminLoginObject).subscribe(
+					response => {
+						if (response) {
+							this.displayVerificationField = true;
+						} else {
+							this.userNotFound = 'Admin not found';
+						}
+					},
+					(error) => {
+						// this.log.error(error); [previous logging functionality]
+						this.httpResponseError = 'Cannot login at this time. Please try again later.';
 					}
-				},
-				(error) => {
-					// this.log.error(error); [previous logging functionality]
-					this.httpResponseError = 'Cannot login at this time. Please try again later.';
-				}
-			);
+				);
 
+			}
 		}
 	}
 
