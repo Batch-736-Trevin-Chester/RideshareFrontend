@@ -101,11 +101,11 @@ export class NavbarComponent implements OnInit {
   }
 
   redirectToHome() {
-    //console.log(this.authService.user);
-    if (this.authService.user !== undefined) {
-      this.authService.user.driver ? this.router.navigate(['/drivers']) : this.router.navigate(['/drivers']);
-    } else {
+    // console.log(this.currentUser);
+    if (this.currentUser == undefined || this.currentUser == '' || this.currentUser == null) {
       this.router.navigate(['']);
+    } else {
+      this.router.navigate(['/drivers']);
     }
   }
 }

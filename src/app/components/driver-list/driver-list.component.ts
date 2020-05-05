@@ -82,10 +82,6 @@ export class DriverListComponent implements OnInit {
   //  --------END OF EXAMPLE CODE--------
 
   ngOnInit(): void {
-
-    const sel = document.getElementById('min') as HTMLSelectElement;
-    console.log(sel.selectedOptions[0].text);
-
     this.drivers = [];
     this.userService.getRidersForLocation1(this.location).subscribe(res => {
       res.forEach(element => {
