@@ -330,6 +330,7 @@ export class SignupModalComponent implements OnInit {
             i = 1;
         }
 
+        console.log(this.user.hAddress);
         if (this.user.hAddress === '' || this.user.hAddress === undefined) {
             this.hAddressError = 'Address field required';
             i = 1;
@@ -339,7 +340,7 @@ export class SignupModalComponent implements OnInit {
             this.hCityError = 'City field required';
             i = 1;
         }
-
+        console.log(this.user.hZip);
         if (this.user.hZip === undefined) {
             this.hZipError = 'Zipcode field required';
             i = 1;

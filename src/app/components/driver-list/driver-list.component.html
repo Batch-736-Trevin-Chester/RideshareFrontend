@@ -1,12 +1,12 @@
 <div class="select_group">
   <label for = "min">Min: </label>
   <select #min id="min">
-    <option value="-1">No min</option>
-    <option value="{{5*miToM}}">5 mi</option>
-    <option value="{{10*miToM}}">10 mi</option>
-    <option value="{{20*miToM}}">20 mi</option>
-    <option value="{{50*miToM}}">50 mi</option>
-    <option value="{{100*miToM}}">100 mi</option>
+    <option class="min" value="-1">No min</option>
+    <option class="min" value="{{5*miToM}}">5 mi</option>
+    <option class="min" value="{{10*miToM}}">10 mi</option>
+    <option class="min" value="{{20*miToM}}">20 mi</option>
+    <option class="min" value="{{50*miToM}}">50 mi</option>
+    <option class="min" value="{{100*miToM}}">100 mi</option>
   </select>
   <span> to </span>
   <label for = "max">Max: </label>
@@ -41,7 +41,7 @@
       <p id="total"></p> -->
 
       <h4>Driver's List</h4>
-      <ng-table [config]="config" (tableChanged)="onChangeTable(config)" (cellClicked)="onCellClick($event, template)"
+      <ng-table id = "table" [config]="config" (tableChanged)="onChangeTable(config)" (cellClicked)="onCellClick($event, template)"
         [rows]="rows" [columns]="columns">
       </ng-table>
       <pagination *ngIf="config.paging" class="pagination-sm" [(ngModel)]="page" [totalItems]="length"
