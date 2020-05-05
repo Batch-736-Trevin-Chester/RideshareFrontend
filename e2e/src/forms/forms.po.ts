@@ -1,4 +1,5 @@
 import { browser, by, element } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
 
 export class CheckForms {
 
@@ -12,15 +13,23 @@ export class CheckForms {
     }
 
     registerUser() {
+        element(by.id('firstname')).clear();
         element(by.id('firstname')).sendKeys('Chris');
+        element(by.id('lastname')).clear();
         element(by.id('lastname')).sendKeys('Rodgers');
+        element(by.id('email')).clear();
         element(by.id('email')).sendKeys('crodgers@gmail.com');
+        element(by.id('phoneNumber')).clear();
         element(by.id('phoneNumber')).sendKeys('5556667777');
+        element(by.id('userName')).clear();
         element(by.id('userName')).sendKeys('crod');
         element(by.id('batch')).click().then(() => {element(by.cssContainingText('option', '1 Morgantown')).click(); });
+        element(by.id('hAddress')).clear();
         element(by.id('hAddress')).sendKeys('111 Montesito Ln');
+        element(by.id('hCity')).clear();
         element(by.id('hCity')).sendKeys('Floresville');
         element(by.id('hState')).$('[value="TX"]').click();
+        element(by.id('hZip')).clear();
         element(by.id('hZip')).sendKeys('78114');
         element(by.id('driver-btn')).click();
         element(by.id('signup')).click();
@@ -82,19 +91,6 @@ export class CheckForms {
         return element(by.id('success')).getText() as Promise<string>;
     }
 
-    // Test updating membership form
-    // navigateToMembership() {
-
-    // }
-
-    // updateMemberInfo() {
-
-    // }
-
-    // getUpdateMemberSuccess() {
-    //     return element(by.id('success')).getText() as Promise<string>;
-    // }
-
     // Test updating car information form
     navigateToCarInfo() {
         element(by.cssContainingText('button', 'Car Information')).click();
@@ -121,16 +117,23 @@ export class CheckForms {
     }
 
     fillRegistrationField(field, input, error) {
+        element(by.id(field)).clear();
         element(by.id(field)).sendKeys(input);
-        element(by.id('signup')).click();
+        element(by.id(field)).sendKeys(protractor.Key.ENTER);
         return element(by.cssContainingText('p', error)).getText() as Promise<string>;
     }
 
     // Test contact update form errors
-    fillContactFormField(field, input, error) {
+    fillFormField(field, input, error) {
         element(by.id(field)).clear();
         element(by.id(field)).sendKeys(input);
-        element(by.id('save')).click();
+        element(by.id(field)).sendKeys(protractor.Key.ENTER);
         return element(by.cssContainingText('p', error)).getText() as Promise<string>;
+    }
+
+    clearFormField(field) {
+        element(by.id(field)).clear();
+        element(by.id(field)).sendKeys(protractor.Key.ENTER);
+        return element(by.id('success')).getText() as Promise<string>;
     }
 }
