@@ -122,10 +122,10 @@ export class ProfileContactComponent implements OnInit {
       this.lastNameError = 'Last name field required';
       i = 1;
     } else if (this.profileObject.lastName.length > 30) {
-      this.firstNameError = 'Last name cannot be more than 30 characters in length';
+      this.lastNameError = 'Last name cannot be more than 30 characters in length';
       i = 1;
     } else if (!(this.validateName(this.profileObject.lastName))) {
-      this.firstNameError = 'Last name allows only 1 space or hyphen and no illegal characters';
+      this.lastNameError = 'Last name allows only 1 space or hyphen and no illegal characters';
       i = 1;
     }
 
