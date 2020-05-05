@@ -105,12 +105,32 @@ export class CheckForms {
         element(by.id('make')).sendKeys('Honda');
         element(by.id('model')).clear();
         element(by.id('model')).sendKeys('Civic');
-        element(by.id('Avseats')).click().then(() => {element(by.cssContainingText('option', '1')).click(); });
+        element(by.id('Avseats')).$('[value="1"]').click();
         element(by.id('Nrseats')).$('[value="3"]').click();
         element(by.id('save')).click();
     }
 
     getUpdateCarSuccess() {
         return element(by.id('success')).getText() as Promise<string>;
+    }
+
+    // Test registration form errors
+    getRegistrationError(error) {
+        element(by.id('signup')).click();
+        return element(by.cssContainingText('p', error)).getText() as Promise<string>;
+    }
+
+    fillRegistrationField(field, input, error) {
+        element(by.id(field)).sendKeys(input);
+        element(by.id('signup')).click();
+        return element(by.cssContainingText('p', error)).getText() as Promise<string>;
+    }
+
+    // Test contact update form errors
+    fillContactFormField(field, input, error) {
+        element(by.id(field)).clear();
+        element(by.id(field)).sendKeys(input);
+        element(by.id('save')).click();
+        return element(by.cssContainingText('p', error)).getText() as Promise<string>;
     }
 }
