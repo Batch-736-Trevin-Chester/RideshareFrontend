@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Address } from 'src/app/models/address';
+import { environment } from 'src/environments/environment';
+
 
 
 @Injectable({
@@ -11,10 +13,16 @@ export class ValidationService {
 	/**
 	 * This is the contructor for the validation service.
 	 */
-	constructor(private http: HttpClient) { }
+	constructor(private http: HttpClient) {
+		this.http.get(`${environment.loginUri}getGoogleApi`).subscribe(response => {
+			if (response['googleMapAPIKey'] != undefined) {
+				this.key = response['googleMapAPIKey'];
+			}});
+
+	}
 
 	googleUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
-	// key = `${Response['googleMapAPIKey']}`;
+	key: string;
 	private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
 	/**
@@ -86,7 +94,7 @@ export class ValidationService {
 	 * This function validates the address
 	 */
 	validateAddress(address: string, city: string, state: string): Observable<Address> {
-		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=`);
+		return this.http.get<Address>(this.googleUrl + this.formatAddress(address, city, state) + `&key=` + this.key);
 	}
 
 	/**
